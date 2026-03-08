@@ -84,7 +84,6 @@
     }
     .order-row:hover { background: #f5f5f5; }
 
-    /* Modal */
     .overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.4); z-index: 200;
@@ -190,7 +189,7 @@
 </div>
 
 <script>
-  // ── CONFIG ──────────────────────────────────────────────
+  // ── CONFIG — remplacez par vos vraies valeurs ───────────
   const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
   const { createClient } = supabase;
@@ -312,9 +311,9 @@
       const color = ci >= 0 ? COLORS[ci % COLORS.length] : '#aaa';
       const p = toPixel(o.latitude, o.longitude, bounds);
       const isHov = hoveredCluster === ci;
-      const g = svgEl('g', { style: 'cursor:pointer' }, svg);      
-g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
-g.addEventListener('mouseleave', () => { hoveredCluster = null; });
+      const g = svgEl('g', { style: 'cursor:pointer' }, svg);
+      g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
+      g.addEventListener('mouseleave', () => { hoveredCluster = null; });
       g.addEventListener('click', () => openModal(o));
       svgEl('circle', {
         cx: p.x, cy: p.y, r: isHov ? 11 : 9,
@@ -357,8 +356,8 @@ g.addEventListener('mouseleave', () => { hoveredCluster = null; });
       card.className = 'cluster-card';
       card.style.borderColor = hoveredCluster === ci ? color : '#eee';
       card.style.background = hoveredCluster === ci ? `${color}12` : '#fff';
-g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
-g.addEventListener('mouseleave', () => { hoveredCluster = null; });
+      card.addEventListener('mouseenter', () => { hoveredCluster = ci; });
+      card.addEventListener('mouseleave', () => { hoveredCluster = null; });
       card.innerHTML = `
         <div class="cluster-header">
           <div class="dot" style="background:${color}"></div>
@@ -422,7 +421,7 @@ g.addEventListener('mouseleave', () => { hoveredCluster = null; });
 
   // ── INIT ────────────────────────────────────────────────
   loadOrders();
-  setInterval(loadOrders, 30000); // rafraîchit toutes les 30 secondes
+  setInterval(loadOrders, 30000);
 </script>
 </body>
 </html>
