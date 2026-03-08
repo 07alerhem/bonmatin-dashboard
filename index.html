@@ -312,9 +312,9 @@
       const color = ci >= 0 ? COLORS[ci % COLORS.length] : '#aaa';
       const p = toPixel(o.latitude, o.longitude, bounds);
       const isHov = hoveredCluster === ci;
-      const g = svgEl('g', { style: 'cursor:pointer' }, svg);
-      g.addEventListener('mouseenter', () => { hoveredCluster = ci; render(); });
-      g.addEventListener('mouseleave', () => { hoveredCluster = null; render(); });
+      const g = svgEl('g', { style: 'cursor:pointer' }, svg);      
+g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
+g.addEventListener('mouseleave', () => { hoveredCluster = null; });
       g.addEventListener('click', () => openModal(o));
       svgEl('circle', {
         cx: p.x, cy: p.y, r: isHov ? 11 : 9,
@@ -357,8 +357,8 @@
       card.className = 'cluster-card';
       card.style.borderColor = hoveredCluster === ci ? color : '#eee';
       card.style.background = hoveredCluster === ci ? `${color}12` : '#fff';
-      card.addEventListener('mouseenter', () => { hoveredCluster = ci; render(); });
-      card.addEventListener('mouseleave', () => { hoveredCluster = null; render(); });
+g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
+g.addEventListener('mouseleave', () => { hoveredCluster = null; });
       card.innerHTML = `
         <div class="cluster-header">
           <div class="dot" style="background:${color}"></div>
