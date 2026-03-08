@@ -207,7 +207,7 @@
 
   // ── LOAD ────────────────────────────────────────────────
   async function loadOrders() {
-    const { data, error } = await db.from('commandes').select('*').order('created_at', { ascending: false });
+    const { data, error } = await db.from('commandes').select('*').order('id', { ascending: false });
     if (error) { console.error(error); return; }
     allOrders = data || [];
     render();
