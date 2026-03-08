@@ -1,393 +1,954 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BonMatin — Livraisons</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: sans-serif; background: #F8F6F1; color: #1a1a1a; }
-    header { background: linear-gradient(135deg, #2C1810, #5C3317); color: #fff; padding: 20px 24px; }
-    header h1 { font-size: 20px; font-weight: 700; }
-    header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-    .stats { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
-    .stat { flex: 1; min-width: 80px; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; }
-    .stat .val { font-size: 22px; font-weight: 800; }
-    .stat .lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
-    .tabs { display: flex; background: #fff; border-bottom: 2px solid #eee; }
-    .tab { padding: 12px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #888; border: none; background: none; border-bottom: 3px solid transparent; transition: all 0.2s; }
-    .tab.active { color: #2C1810; border-bottom-color: #FF6B35; }
-    .controls { padding: 14px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
-    .btn-filter { padding: 6px 14px; border-radius: 20px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: #E8E0D5; color: #5a4030; transition: all 0.2s; }
-    .btn-filter.active { background: #2C1810; color: #fff; }
-    .slider-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-    .slider-wrap span { font-size: 11px; color: #888; }
-    .slider-wrap strong { color: #FF6B35; font-size: 12px; }
-    .main { display: flex; gap: 0; flex-wrap: wrap; }
-    .map-wrap { background: #fff; margin: 16px; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); flex-shrink: 0; }
-    .map-header { padding: 10px 14px; border-bottom: 1px solid #eee; font-size: 12px; color: #666; }
-    svg { display: block; background: #EAF4EA; }
-    .panel { flex: 1; min-width: 260px; padding: 0 16px 16px; }
-    .panel h2 { font-size: 13px; font-weight: 700; color: #2C1810; margin: 16px 0 8px; }
-    .cluster-card { background: #fff; border: 2px solid #eee; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; transition: all 0.2s; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
-    .cluster-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .cluster-title { font-size: 12px; font-weight: 700; color: #333; }
-    .cluster-total { margin-left: auto; font-size: 11px; color: #FF6B35; font-weight: 700; }
-    .order-row { display: flex; justify-content: space-between; font-size: 11px; color: #555; padding: 4px 6px; border-radius: 6px; margin-bottom: 2px; cursor: pointer; transition: background 0.15s; }
-    .order-row:hover { background: #f5f5f5; }
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
-    .overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: 16px 16px 0 0; padding: 20px; width: 100%; max-width: 520px; box-shadow: 0 -4px 20px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal-title { font-size: 16px; font-weight: 700; color: #2C1810; }
-    .modal-sub { font-size: 13px; color: #666; margin-top: 6px; line-height: 1.6; }
-    .modal-address { background: #F8F6F1; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #444; margin-top: 8px; }
-    .nav-buttons { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .btn-nav { flex: 1; min-width: 100px; padding: 10px 12px; border: none; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: opacity 0.2s; }
-    .btn-nav:hover { opacity: 0.85; }
-    .btn-gmaps { background: #4285F4; color: #fff; }
-    .btn-waze { background: #33CCFF; color: #1a1a1a; }
-    .btn-plans { background: #FF6B35; color: #fff; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 12px; }
-    .btn-deliver { flex: 1; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
-    .btn-close-modal { padding: 12px 20px; border: none; border-radius: 10px; background: #F0EDE8; color: #666; cursor: pointer; font-size: 14px; }
-    .delivered-section { padding: 16px; }
-    .table-wrap { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
-    thead { background: #2C1810; color: #fff; }
-    thead th { padding: 10px 12px; text-align: left; font-weight: 600; white-space: nowrap; }
-    tbody tr { border-bottom: 1px solid #f0ede8; transition: background 0.15s; }
-    tbody tr:hover { background: #faf8f5; }
-    tbody td { padding: 10px 12px; color: #444; }
-    .tag-delivered { display: inline-block; padding: 2px 8px; border-radius: 20px; background: #D1F2E1; color: #0a6640; font-size: 10px; font-weight: 700; }
-    .tag-moment { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-    .tag-matin { background: #FFF3CD; color: #856404; }
-    .tag-aprem { background: #E8D5F5; color: #5a1f8a; }
-    .empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
-    .refresh-btn { margin-left: auto; padding: 6px 14px; border-radius: 20px; border: none; background: #FF6B35; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-left: 4px; }
-    .badge.pending { background: #FFF3CD; color: #856404; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BonMatin — Livraisons</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: #F8F6F1;
+            color: #1a1a1a;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2C1810, #5C3317);
+            color: #fff;
+            padding: 20px 24px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .stat .val {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .stat .lbl {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            border: none;
+            background: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #2C1810;
+            border-bottom-color: #FF6B35;
+        }
+
+        .controls {
+            padding: 14px 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-filter {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            background: #E8E0D5;
+            color: #5a4030;
+            transition: all 0.2s;
+        }
+
+        .btn-filter.active {
+            background: #2C1810;
+            color: #fff;
+        }
+
+        .slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .slider-wrap span {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .slider-wrap strong {
+            color: #FF6B35;
+            font-size: 12px;
+        }
+
+        .main {
+            display: flex;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .map-wrap {
+            background: #fff;
+            margin: 16px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .map-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+            color: #666;
+        }
+
+        svg {
+            display: block;
+            background: #EAF4EA;
+        }
+
+        .panel {
+            flex: 1;
+            min-width: 260px;
+            padding: 0 16px 16px;
+        }
+
+        .panel h2 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2C1810;
+            margin: 16px 0 8px;
+        }
+
+        .cluster-card {
+            background: #fff;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .cluster-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .cluster-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .cluster-total {
+            margin-left: auto;
+            font-size: 11px;
+            color: #FF6B35;
+            font-weight: 700;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #555;
+            padding: 4px 6px;
+            border-radius: 6px;
+            margin-bottom: 2px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .order-row:hover {
+            background: #f5f5f5;
+        }
+
+        /* MODAL */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2C1810;
+        }
+
+        .modal-sub {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        .modal-address {
+            background: #F8F6F1;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #444;
+            margin-top: 8px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.85;
+        }
+
+        .btn-gmaps {
+            background: #4285F4;
+            color: #fff;
+        }
+
+        .btn-waze {
+            background: #33CCFF;
+            color: #1a1a1a;
+        }
+
+        .btn-plans {
+            background: #FF6B35;
+            color: #fff;
+        }
+
+        /* STATUTS LIVREUR */
+        .status-section {
+            margin-top: 14px;
+        }
+
+        .status-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .status-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-status {
+            padding: 10px 8px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .btn-status:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        .btn-status.current {
+            border-color: #FF6B35;
+            background: #FFF5F0;
+            color: #FF6B35;
+        }
+
+        .btn-status.delivered-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .btn-status.delivered-btn:hover {
+            opacity: 0.9;
+            border: none;
+        }
+
+        .modal-close-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #F0EDE8;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* TABLEAU LIVRÉS */
+        .delivered-section {
+            padding: 16px;
+        }
+
+        .table-wrap {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 600px;
+        }
+
+        thead {
+            background: #2C1810;
+            color: #fff;
+        }
+
+        thead th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0ede8;
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover {
+            background: #faf8f5;
+        }
+
+        tbody td {
+            padding: 10px 12px;
+            color: #444;
+        }
+
+        .tag-delivered {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: #D1F2E1;
+            color: #0a6640;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .tag-moment {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .tag-matin {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .tag-aprem {
+            background: #E8D5F5;
+            color: #5a1f8a;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            margin-left: auto;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: none;
+            background: #FF6B35;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .badge.pending {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+    </style>
 </head>
+
 <body>
 
-<header>
-  <h1>🚴 BonMatin — Tableau de bord livraisons</h1>
-  <p>Optimisation des tournées en temps réel</p>
-  <div class="stats">
-    <div class="stat"><div class="val" id="stat-pending">–</div><div class="lbl">En attente</div></div>
-    <div class="stat"><div class="val" id="stat-delivered">–</div><div class="lbl">Livrées</div></div>
-    <div class="stat"><div class="val" id="stat-clusters">–</div><div class="lbl">Tournées</div></div>
-    <div class="stat"><div class="val" id="stat-ca">–</div><div class="lbl">CA total</div></div>
-  </div>
-</header>
+    <header>
+        <h1>🚴 BonMatin — Tableau de bord livraisons</h1>
+        <p>Optimisation des tournées en temps réel</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="val" id="stat-pending">–</div>
+                <div class="lbl">En attente</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="stat-delivered">–</div>
+                <div class="lbl">Livrées</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="stat-clusters">–</div>
+                <div class="lbl">Tournées</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="stat-ca">–</div>
+                <div class="lbl">CA total</div>
+            </div>
+        </div>
+    </header>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('livraisons', this)">🚴 En cours</button>
-  <button class="tab" onclick="switchTab('livres', this)">✅ Livrées</button>
-</div>
-
-<!-- TAB LIVRAISONS -->
-<div id="tab-livraisons">
-  <div class="controls">
-    <button class="btn-filter active" onclick="setFilter('all', event)">Tout</button>
-    <button class="btn-filter" onclick="setFilter('matin', event)">🌅 Matin</button>
-    <button class="btn-filter" onclick="setFilter('aprem', event)">🍰 Après-midi</button>
-    <div class="slider-wrap">
-      <span>Rayon :</span>
-      <input type="range" min="0.3" max="2" step="0.1" value="0.8"
-        oninput="maxKm = parseFloat(this.value); document.getElementById('km-val').textContent = this.value + ' km'; render();" />
-      <strong id="km-val">0.8 km</strong>
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('livraisons', this)">🚴 En cours</button>
+        <button class="tab" onclick="switchTab('livres', this)">✅ Livrées</button>
     </div>
-    <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
-  </div>
-  <div class="main">
-    <div class="map-wrap">
-      <div class="map-header">📍 Carte · <span style="color:#FF6B35;font-weight:700;">Coloré = en attente</span> · Gris = livré</div>
-      <svg id="map" width="480" height="340"></svg>
+
+    <div id="tab-livraisons">
+        <div class="controls">
+            <button class="btn-filter active" onclick="setFilter('all', event)">Tout</button>
+            <button class="btn-filter" onclick="setFilter('matin', event)">🌅 Matin</button>
+            <button class="btn-filter" onclick="setFilter('aprem', event)">🍰 Après-midi</button>
+            <div class="slider-wrap">
+                <span>Rayon :</span>
+                <input type="range" min="0.3" max="2" step="0.1" value="0.8" oninput="maxKm = parseFloat(this.value); document.getElementById('km-val').textContent = this.value + ' km'; render();" />
+                <strong id="km-val">0.8 km</strong>
+            </div>
+            <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
+        </div>
+        <div class="main">
+            <div class="map-wrap">
+                <div class="map-header">📍 Carte · <span style="color:#FF6B35;font-weight:700;">Coloré = en attente</span> · Gris = livré</div>
+                <svg id="map" width="480" height="340"></svg>
+            </div>
+            <div class="panel">
+                <h2 id="cluster-title">Tournées suggérées</h2>
+                <div id="clusters-list"></div>
+            </div>
+        </div>
     </div>
-    <div class="panel">
-      <h2 id="cluster-title">Tournées suggérées</h2>
-      <div id="clusters-list"></div>
+
+    <div id="tab-livres" style="display:none;">
+        <div class="delivered-section">
+            <div style="display:flex;align-items:center;margin-bottom:12px;">
+                <h2 style="margin:0;font-size:14px;font-weight:700;color:#2C1810;">✅ Commandes livrées</h2>
+                <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Client</th>
+                            <th>Commande</th>
+                            <th>Adresse</th>
+                            <th>Total</th>
+                            <th>Heure</th>
+                            <th>Moment</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="delivered-tbody">
+                        <tr>
+                            <td colspan="8" class="empty">Aucune livraison pour l'instant</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="delivered-total" style="text-align:right;margin-top:10px;font-weight:700;color:#2C1810;font-size:13px;"></div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- TAB LIVRÉES -->
-<div id="tab-livres" style="display:none;">
-  <div class="delivered-section">
-    <div style="display:flex;align-items:center;margin-bottom:12px;">
-      <h2 style="margin:0;font-size:14px;font-weight:700;color:#2C1810;">✅ Commandes livrées</h2>
-      <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
+    <!-- MODAL -->
+    <div class="overlay" id="overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="flex:1">
+                    <div class="modal-title" id="modal-title"></div>
+                    <div class="modal-sub" id="modal-sub"></div>
+                    <div class="modal-address" id="modal-address"></div>
+                    <div class="nav-buttons" id="nav-buttons"></div>
+                </div>
+                <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;margin-left:10px;">✕</button>
+            </div>
+
+            <!-- STATUTS LIVREUR -->
+            <div class="status-section">
+                <div class="status-section-title">Mettre à jour le statut</div>
+                <div class="status-buttons">
+                    <button class="btn-status" id="btn-preparation" onclick="updateStatus('preparation')">👨‍🍳 En préparation</button>
+                    <button class="btn-status" id="btn-en_livraison" onclick="updateStatus('en_livraison')">🚴 En route</button>
+                    <button class="btn-status" id="btn-imminent" onclick="updateStatus('imminent')">📍 Livraison imminente</button>
+                    <button class="btn-status delivered-btn" id="btn-delivered" onclick="updateStatus('delivered')">✅ Marquer comme livré</button>
+                </div>
+            </div>
+
+            <button class="modal-close-btn" onclick="closeModal()">Fermer</button>
+        </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th><th>Client</th><th>Commande</th><th>Adresse</th>
-            <th>Total</th><th>Heure</th><th>Moment</th><th>Statut</th>
-          </tr>
-        </thead>
-        <tbody id="delivered-tbody">
-          <tr><td colspan="8" class="empty">Aucune livraison pour l'instant</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div id="delivered-total" style="text-align:right;margin-top:10px;font-weight:700;color:#2C1810;font-size:13px;"></div>
-  </div>
-</div>
 
-<!-- MODAL -->
-<div class="overlay" id="overlay" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div style="flex:1">
-        <div class="modal-title" id="modal-title"></div>
-        <div class="modal-sub" id="modal-sub"></div>
-        <div class="modal-address" id="modal-address"></div>
-        <div class="nav-buttons" id="nav-buttons"></div>
-      </div>
-      <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;margin-left:10px;">✕</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-deliver" id="btn-deliver">✅ Marquer comme livré</button>
-      <button class="btn-close-modal" onclick="closeModal()">Fermer</button>
-    </div>
-  </div>
-</div>
+    <script>
+        const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
+        const {
+            createClient
+        } = supabase;
+        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<script>
-  const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+        let allOrders = [],
+            filterSlot = 'all',
+            maxKm = 0.8,
+            hoveredCluster = null;
+        let currentOrder = null;
+        const W = 480,
+            H = 340;
+        const COLORS = ['#FF6B35', '#4ECDC4', '#45B7D1', '#96CEB4', '#F7931E', '#DDA0DD'];
+        const PENDING_STATUTS = ['awaiting_location', 'preparation', 'en_livraison', 'imminent', 'pending'];
 
-  let allOrders = [], filterSlot = 'all', maxKm = 0.8, hoveredCluster = null;
-  const W = 480, H = 340;
-  const COLORS = ['#FF6B35','#4ECDC4','#45B7D1','#96CEB4','#F7931E','#DDA0DD'];
+        function switchTab(tab, btn) {
+            document.getElementById('tab-livraisons').style.display = tab === 'livraisons' ? 'block' : 'none';
+            document.getElementById('tab-livres').style.display = tab === 'livres' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            if (tab === 'livres') renderDelivered();
+        }
 
-  function switchTab(tab, btn) {
-    document.getElementById('tab-livraisons').style.display = tab === 'livraisons' ? 'block' : 'none';
-    document.getElementById('tab-livres').style.display = tab === 'livres' ? 'block' : 'none';
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    if (tab === 'livres') renderDelivered();
-  }
+        async function loadOrders() {
+            const {
+                data,
+                error
+            } = await db.from('commandes').select('*');
+            if (error) {
+                console.error(error);
+                return;
+            }
+            allOrders = data || [];
+            render();
+        }
 
-  async function loadOrders() {
-    const { data, error } = await db.from('commandes').select('*');
-    if (error) { console.error(error); return; }
-    allOrders = data || [];
-    render();
-  }
+        function setFilter(slot, e) {
+            filterSlot = slot;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+            render();
+        }
 
-  function setFilter(slot, e) {
-    filterSlot = slot;
-    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-    if (e && e.target) e.target.classList.add('active');
-    render();
-  }
+        function getFiltered() {
+            return filterSlot === 'all' ? allOrders : allOrders.filter(o => o.moment === filterSlot);
+        }
 
-  function getFiltered() {
-    return filterSlot === 'all' ? allOrders : allOrders.filter(o => o.moment === filterSlot);
-  }
+        function isPending(o) {
+            return PENDING_STATUTS.includes(o.statut);
+        }
 
-  function dist(a, b) {
-    if (!a.latitude || !b.latitude) return 999;
-    const dx = (a.latitude - b.latitude) * 111;
-    const dy = (a.longitude - b.longitude) * 85;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
+        function dist(a, b) {
+            if (!a.latitude || !b.latitude) return 999;
+            const dx = (a.latitude - b.latitude) * 111;
+            const dy = (a.longitude - b.longitude) * 85;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
 
-  function cluster(orders) {
-    const pending = orders.filter(o => o.statut === 'pending');
-    const clusters = [], visited = new Set();
-    for (const o of pending) {
-      if (visited.has(o.id)) continue;
-      const c = [o]; visited.add(o.id);
-      for (const other of pending) {
-        if (visited.has(other.id)) continue;
-        if (dist(o, other) < maxKm) { c.push(other); visited.add(other.id); }
-      }
-      clusters.push(c);
-    }
-    return clusters;
-  }
+        function cluster(orders) {
+            const pending = orders.filter(isPending);
+            const clusters = [],
+                visited = new Set();
+            for (const o of pending) {
+                if (visited.has(o.id)) continue;
+                const c = [o];
+                visited.add(o.id);
+                for (const other of pending) {
+                    if (visited.has(other.id)) continue;
+                    if (dist(o, other) < maxKm) {
+                        c.push(other);
+                        visited.add(other.id);
+                    }
+                }
+                clusters.push(c);
+            }
+            return clusters;
+        }
 
-  function toPixel(lat, lng, bounds) {
-    return {
-      x: ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * W,
-      y: H - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * H
-    };
-  }
+        function toPixel(lat, lng, bounds) {
+            return {
+                x: ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * W,
+                y: H - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * H
+            };
+        }
 
-  function svgEl(tag, attrs, parent) {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-    if (parent) parent.appendChild(el);
-    return el;
-  }
+        function svgEl(tag, attrs, parent) {
+            const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+            for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+            if (parent) parent.appendChild(el);
+            return el;
+        }
 
-  function renderMap(filtered, clusters) {
-    const svg = document.getElementById('map');
-    svg.innerHTML = '';
-    const hasGps = filtered.filter(o => o.latitude && o.longitude);
-    if (hasGps.length === 0) {
-      const t = svgEl('text', { x: W/2, y: H/2, 'text-anchor': 'middle', fill: '#aaa', 'font-size': '12' }, svg);
-      t.textContent = 'Adresses textuelles — carte non disponible';
-      return;
-    }
-    const bounds = {
-      minLat: Math.min(...hasGps.map(o => o.latitude)) - 0.003,
-      maxLat: Math.max(...hasGps.map(o => o.latitude)) + 0.003,
-      minLng: Math.min(...hasGps.map(o => o.longitude)) - 0.005,
-      maxLng: Math.max(...hasGps.map(o => o.longitude)) + 0.005,
-    };
-    [0.25,0.5,0.75].forEach(f => {
-      svgEl('line',{x1:0,y1:H*f,x2:W,y2:H*f,stroke:'#C8DFC8','stroke-width':'0.5'},svg);
-      svgEl('line',{x1:W*f,y1:0,x2:W*f,y2:H,stroke:'#C8DFC8','stroke-width':'0.5'},svg);
-    });
-    clusters.forEach((c,ci) => {
-      if (c.length < 2) return;
-      const color = COLORS[ci%COLORS.length];
-      const pts = c.filter(o=>o.latitude).map(o=>toPixel(o.latitude,o.longitude,bounds));
-      pts.slice(0,-1).forEach((p,i) => svgEl('line',{x1:p.x,y1:p.y,x2:pts[i+1].x,y2:pts[i+1].y,stroke:color,'stroke-width':hoveredCluster===ci?3:1.5,'stroke-dasharray':'5,3',opacity:0.7},svg));
-    });
-    filtered.filter(o=>o.statut==='delivered'&&o.latitude).forEach(o => {
-      const p = toPixel(o.latitude,o.longitude,bounds);
-      svgEl('circle',{cx:p.x,cy:p.y,r:5,fill:'#bbb',opacity:0.5},svg);
-    });
-    filtered.filter(o=>o.statut==='pending'&&o.latitude).forEach(o => {
-      const ci = clusters.findIndex(c=>c.some(x=>x.id===o.id));
-      const color = ci>=0?COLORS[ci%COLORS.length]:'#aaa';
-      const p = toPixel(o.latitude,o.longitude,bounds);
-      const g = svgEl('g',{style:'cursor:pointer'},svg);
-      g.addEventListener('mouseenter',()=>{hoveredCluster=ci;});
-      g.addEventListener('mouseleave',()=>{hoveredCluster=null;});
-      g.addEventListener('click',()=>openModal(o));
-      svgEl('circle',{cx:p.x,cy:p.y,r:hoveredCluster===ci?11:9,fill:color,stroke:'#fff','stroke-width':2},g);
-      const t = svgEl('text',{x:p.x,y:p.y+4,'text-anchor':'middle','font-size':9,fill:'#fff','font-weight':'bold'},g);
-      t.textContent = o.id;
-    });
-    clusters.forEach((c,ci) => {
-      const withGps = c.filter(o=>o.latitude);
-      if (!withGps.length) return;
-      const color = COLORS[ci%COLORS.length];
-      const pts = withGps.map(o=>toPixel(o.latitude,o.longitude,bounds));
-      const cx = pts.reduce((s,p)=>s+p.x,0)/pts.length;
-      const cy = pts.reduce((s,p)=>s+p.y,0)/pts.length;
-      const t = svgEl('text',{x:cx,y:cy-16,'text-anchor':'middle','font-size':9,fill:color,'font-weight':'bold','font-family':'sans-serif',opacity:0.9},svg);
-      t.textContent = `Tournée ${ci+1} (${c.length})`;
-    });
-  }
+        function renderMap(filtered, clusters) {
+            const svg = document.getElementById('map');
+            svg.innerHTML = '';
+            const hasGps = filtered.filter(o => o.latitude && o.longitude);
+            if (!hasGps.length) {
+                const t = svgEl('text', {
+                    x: W / 2,
+                    y: H / 2,
+                    'text-anchor': 'middle',
+                    fill: '#aaa',
+                    'font-size': '12'
+                }, svg);
+                t.textContent = 'Aucune coordonnée GPS disponible';
+                return;
+            }
+            const bounds = {
+                minLat: Math.min(...hasGps.map(o => o.latitude)) - 0.003,
+                maxLat: Math.max(...hasGps.map(o => o.latitude)) + 0.003,
+                minLng: Math.min(...hasGps.map(o => o.longitude)) - 0.005,
+                maxLng: Math.max(...hasGps.map(o => o.longitude)) + 0.005,
+            };
+            [0.25, 0.5, 0.75].forEach(f => {
+                svgEl('line', {
+                    x1: 0,
+                    y1: H * f,
+                    x2: W,
+                    y2: H * f,
+                    stroke: '#C8DFC8',
+                    'stroke-width': '0.5'
+                }, svg);
+                svgEl('line', {
+                    x1: W * f,
+                    y1: 0,
+                    x2: W * f,
+                    y2: H,
+                    stroke: '#C8DFC8',
+                    'stroke-width': '0.5'
+                }, svg);
+            });
+            clusters.forEach((c, ci) => {
+                if (c.length < 2) return;
+                const color = COLORS[ci % COLORS.length];
+                const pts = c.filter(o => o.latitude).map(o => toPixel(o.latitude, o.longitude, bounds));
+                pts.slice(0, -1).forEach((p, i) => svgEl('line', {
+                    x1: p.x,
+                    y1: p.y,
+                    x2: pts[i + 1].x,
+                    y2: pts[i + 1].y,
+                    stroke: color,
+                    'stroke-width': hoveredCluster === ci ? 3 : 1.5,
+                    'stroke-dasharray': '5,3',
+                    opacity: 0.7
+                }, svg));
+            });
+            filtered.filter(o => o.statut === 'delivered' && o.latitude).forEach(o => {
+                const p = toPixel(o.latitude, o.longitude, bounds);
+                svgEl('circle', {
+                    cx: p.x,
+                    cy: p.y,
+                    r: 5,
+                    fill: '#bbb',
+                    opacity: 0.5
+                }, svg);
+            });
+            filtered.filter(o => isPending(o) && o.latitude).forEach(o => {
+                const ci = clusters.findIndex(c => c.some(x => x.id === o.id));
+                const color = ci >= 0 ? COLORS[ci % COLORS.length] : '#aaa';
+                const p = toPixel(o.latitude, o.longitude, bounds);
+                const g = svgEl('g', {
+                    style: 'cursor:pointer'
+                }, svg);
+                g.addEventListener('mouseenter', () => {
+                    hoveredCluster = ci;
+                });
+                g.addEventListener('mouseleave', () => {
+                    hoveredCluster = null;
+                });
+                g.addEventListener('click', () => openModal(o));
+                svgEl('circle', {
+                    cx: p.x,
+                    cy: p.y,
+                    r: hoveredCluster === ci ? 11 : 9,
+                    fill: color,
+                    stroke: '#fff',
+                    'stroke-width': 2
+                }, g);
+                const t = svgEl('text', {
+                    x: p.x,
+                    y: p.y + 4,
+                    'text-anchor': 'middle',
+                    'font-size': 9,
+                    fill: '#fff',
+                    'font-weight': 'bold'
+                }, g);
+                t.textContent = o.id;
+            });
+            clusters.forEach((c, ci) => {
+                const wg = c.filter(o => o.latitude);
+                if (!wg.length) return;
+                const color = COLORS[ci % COLORS.length];
+                const pts = wg.map(o => toPixel(o.latitude, o.longitude, bounds));
+                const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length,
+                    cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+                const t = svgEl('text', {
+                    x: cx,
+                    y: cy - 16,
+                    'text-anchor': 'middle',
+                    'font-size': 9,
+                    fill: color,
+                    'font-weight': 'bold',
+                    'font-family': 'sans-serif',
+                    opacity: 0.9
+                }, svg);
+                t.textContent = `Tournée ${ci+1} (${c.length})`;
+            });
+        }
 
-  function renderList(clusters) {
-    const el = document.getElementById('clusters-list');
-    document.getElementById('cluster-title').textContent = `Tournées suggérées (${clusters.length})`;
-    if (clusters.length === 0) { el.innerHTML = '<div class="empty">Aucune commande en attente</div>'; return; }
-    el.innerHTML = '';
-    clusters.forEach((c,ci) => {
-      const color = COLORS[ci%COLORS.length];
-      const total = c.reduce((s,o)=>s+(o.total||0),0);
-      const card = document.createElement('div');
-      card.className = 'cluster-card';
-      card.style.borderColor = hoveredCluster===ci?color:'#eee';
-      card.style.background = hoveredCluster===ci?`${color}12`:'#fff';
-      card.addEventListener('mouseenter',()=>{hoveredCluster=ci;});
-      card.addEventListener('mouseleave',()=>{hoveredCluster=null;});
-      card.innerHTML = `
+        function renderList(clusters) {
+            const el = document.getElementById('clusters-list');
+            document.getElementById('cluster-title').textContent = `Tournées suggérées (${clusters.length})`;
+            if (!clusters.length) {
+                el.innerHTML = '<div class="empty">Aucune commande en attente</div>';
+                return;
+            }
+            el.innerHTML = '';
+            clusters.forEach((c, ci) => {
+                const color = COLORS[ci % COLORS.length],
+                    total = c.reduce((s, o) => s + (o.total || 0), 0);
+                const card = document.createElement('div');
+                card.className = 'cluster-card';
+                card.style.borderColor = hoveredCluster === ci ? color : '#eee';
+                card.style.background = hoveredCluster === ci ? `${color}12` : '#fff';
+                card.addEventListener('mouseenter', () => {
+                    hoveredCluster = ci;
+                });
+                card.addEventListener('mouseleave', () => {
+                    hoveredCluster = null;
+                });
+                card.innerHTML = `
         <div class="cluster-header">
           <div class="dot" style="background:${color}"></div>
           <span class="cluster-title">Tournée ${ci+1} · ${c.length} livraison${c.length>1?'s':''}</span>
           <span class="cluster-total">${total.toFixed(2)}€</span>
         </div>
-        ${c.map(o=>`
-          <div class="order-row" onclick='openModal(${JSON.stringify(o).replace(/'/g,"&#39;")})'>
-            <span>#${o.id} ${o.client} <span class="badge pending">⏳</span></span>
-            <span style="color:#888">${o.heure||''}</span>
-          </div>
-        `).join('')}`;
-      el.appendChild(card);
-    });
-  }
+        ${c.map(o=>`<div class="order-row" onclick='openModal(${JSON.stringify(o).replace(/'/g,"&#39;")})'>
+          <span>#${o.id} ${o.client} <span class="badge pending">⏳</span></span>
+          <span style="color:#888">${o.heure||''}</span>
+        </div>`).join('')}`;
+                el.appendChild(card);
+            });
+        }
 
-  function renderStats(filtered, clusters) {
-    document.getElementById('stat-pending').textContent = filtered.filter(o=>o.statut==='pending').length;
-    document.getElementById('stat-delivered').textContent = filtered.filter(o=>o.statut==='delivered').length;
-    document.getElementById('stat-clusters').textContent = clusters.length;
-    document.getElementById('stat-ca').textContent = allOrders.reduce((s,o)=>s+(o.total||0),0).toFixed(2)+'€';
-  }
+        function renderStats(filtered, clusters) {
+            document.getElementById('stat-pending').textContent = filtered.filter(isPending).length;
+            document.getElementById('stat-delivered').textContent = filtered.filter(o => o.statut === 'delivered').length;
+            document.getElementById('stat-clusters').textContent = clusters.length;
+            document.getElementById('stat-ca').textContent = allOrders.reduce((s, o) => s + (o.total || 0), 0).toFixed(2) + '€';
+        }
 
-  function renderDelivered() {
-    const delivered = allOrders.filter(o=>o.statut==='delivered');
-    const tbody = document.getElementById('delivered-tbody');
-    if (delivered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="empty">Aucune livraison pour l\'instant</td></tr>';
-      document.getElementById('delivered-total').textContent = '';
-      return;
-    }
-    const total = delivered.reduce((s,o)=>s+(o.total||0),0);
-    tbody.innerHTML = delivered.map(o=>`
-      <tr>
-        <td style="color:#aaa">#${o.id}</td>
-        <td style="font-weight:600">${o.client||'–'}</td>
-        <td>${o.article||'–'}</td>
-        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.adresse||''}">${o.adresse||(o.latitude?'📍 GPS':'–')}</td>
-        <td style="font-weight:700;color:#2C1810">${(o.total||0).toFixed(2)}€</td>
-        <td>${o.heure||'–'}</td>
-        <td><span class="tag-moment tag-${o.moment}">${o.moment==='matin'?'🌅 Matin':'🍰 Après-midi'}</span></td>
-        <td><span class="tag-delivered">✅ Livré</span></td>
-      </tr>`).join('');
-    document.getElementById('delivered-total').textContent = `Total encaissé : ${total.toFixed(2)}€`;
-  }
+        function renderDelivered() {
+            const delivered = allOrders.filter(o => o.statut === 'delivered');
+            const tbody = document.getElementById('delivered-tbody');
+            if (!delivered.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty">Aucune livraison</td></tr>';
+                document.getElementById('delivered-total').textContent = '';
+                return;
+            }
+            const total = delivered.reduce((s, o) => s + (o.total || 0), 0);
+            tbody.innerHTML = delivered.map(o => `<tr>
+      <td style="color:#aaa">#${o.id}</td>
+      <td style="font-weight:600">${o.client||'–'}</td>
+      <td>${o.article||'–'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.adresse||''}">${o.adresse||(o.latitude?'📍 GPS':'–')}</td>
+      <td style="font-weight:700;color:#2C1810">${(o.total||0).toFixed(2)}€</td>
+      <td>${o.heure||'–'}</td>
+      <td><span class="tag-moment tag-${o.moment}">${o.moment==='matin'?'🌅 Matin':'🍰 Après-midi'}</span></td>
+      <td><span class="tag-delivered">✅ Livré</span></td>
+    </tr>`).join('');
+            document.getElementById('delivered-total').textContent = `Total encaissé : ${total.toFixed(2)}€`;
+        }
 
-  function render() {
-    const filtered = getFiltered();
-    const clusters = cluster(filtered);
-    renderStats(filtered, clusters);
-    renderMap(filtered, clusters);
-    renderList(clusters);
-  }
+        function render() {
+            const filtered = getFiltered(),
+                clusters = cluster(filtered);
+            renderStats(filtered, clusters);
+            renderMap(filtered, clusters);
+            renderList(clusters);
+        }
 
-  function buildNavLinks(order) {
-    const addr = order.adresse || '';
-    const lat = order.latitude, lng = order.longitude;
-    const q = lat ? `${lat},${lng}` : encodeURIComponent(addr);
-    const ae = encodeURIComponent(addr);
-    const gmaps = lat ? `https://www.google.com/maps/dir/?api=1&destination=${q}` : `https://www.google.com/maps/dir/?api=1&destination=${ae}`;
-    const waze = lat ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : `https://waze.com/ul?q=${ae}&navigate=yes`;
-    const plans = lat ? `https://maps.apple.com/?daddr=${lat},${lng}` : `https://maps.apple.com/?daddr=${ae}`;
-    return `
-      <a href="${gmaps}" target="_blank" class="btn-nav btn-gmaps">🗺️ Google Maps</a>
-      <a href="${waze}" target="_blank" class="btn-nav btn-waze">🚗 Waze</a>
-      <a href="${plans}" target="_blank" class="btn-nav btn-plans">🍎 Plans</a>`;
-  }
+        function buildNavLinks(order) {
+            const addr = order.adresse || '',
+                lat = order.latitude,
+                lng = order.longitude;
+            const q = lat ? `${lat},${lng}` : encodeURIComponent(addr),
+                ae = encodeURIComponent(addr);
+            return `
+      <a href="${lat?`https://www.google.com/maps/dir/?api=1&destination=${q}`:`https://www.google.com/maps/dir/?api=1&destination=${ae}`}" target="_blank" class="btn-nav btn-gmaps">🗺️ Google Maps</a>
+      <a href="${lat?`https://waze.com/ul?ll=${lat},${lng}&navigate=yes`:`https://waze.com/ul?q=${ae}&navigate=yes`}" target="_blank" class="btn-nav btn-waze">🚗 Waze</a>
+      <a href="${lat?`https://maps.apple.com/?daddr=${lat},${lng}`:`https://maps.apple.com/?daddr=${ae}`}" target="_blank" class="btn-nav btn-plans">🍎 Plans</a>`;
+        }
 
-  function openModal(order) {
-    document.getElementById('modal-title').textContent = `#${order.id} — ${order.client}`;
-    document.getElementById('modal-sub').innerHTML = `📦 ${order.article}<br>⏰ ${order.heure||'–'} &nbsp;·&nbsp; 💰 ${(order.total||0).toFixed(2)}€`;
-    document.getElementById('modal-address').innerHTML = `📍 ${order.adresse||(order.latitude?`GPS : ${order.latitude?.toFixed(5)}, ${order.longitude?.toFixed(5)}`:'Adresse non renseignée')}`;
-    document.getElementById('nav-buttons').innerHTML = buildNavLinks(order);
-    document.getElementById('btn-deliver').onclick = () => markDelivered(order.id);
-    document.getElementById('overlay').classList.add('open');
-  }
+        function openModal(order) {
+            currentOrder = order;
+            document.getElementById('modal-title').textContent = `#${order.id} — ${order.client}`;
+            document.getElementById('modal-sub').innerHTML = `📦 ${order.article}<br>⏰ ${order.heure||'–'} &nbsp;·&nbsp; 💰 ${(order.total||0).toFixed(2)}€`;
+            document.getElementById('modal-address').innerHTML = `📍 ${order.adresse||(order.latitude?`GPS : ${order.latitude?.toFixed(5)}, ${order.longitude?.toFixed(5)}`:'Adresse non renseignée')}`;
+            document.getElementById('nav-buttons').innerHTML = buildNavLinks(order);
 
-  function closeModal(e) {
-    if (!e || e.target === document.getElementById('overlay')) {
-      document.getElementById('overlay').classList.remove('open');
-    }
-  }
+            // Highlight statut actuel
+            ['preparation', 'en_livraison', 'imminent'].forEach(s => {
+                const btn = document.getElementById(`btn-${s}`);
+                btn.classList.toggle('current', order.statut === s);
+            });
 
-  async function markDelivered(id) {
-    await db.from('commandes').update({ statut: 'delivered' }).eq('id', id);
-    document.getElementById('overlay').classList.remove('open');
-    await loadOrders();
-  }
+            document.getElementById('overlay').classList.add('open');
+        }
 
-  loadOrders();
-  setInterval(loadOrders, 30000);
-</script>
+        function closeModal(e) {
+            if (!e || e.target === document.getElementById('overlay')) {
+                document.getElementById('overlay').classList.remove('open');
+            }
+        }
+
+        async function updateStatus(statut) {
+            if (!currentOrder) return;
+            await db.from('commandes').update({
+                statut
+            }).eq('id', currentOrder.id);
+            document.getElementById('overlay').classList.remove('open');
+            await loadOrders();
+        }
+
+        loadOrders();
+        setInterval(loadOrders, 30000);
+
+    </script>
 </body>
+
 </html>
