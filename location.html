@@ -53,7 +53,6 @@
             margin-top: 1px;
         }
 
-        /* BARRE RECHERCHE */
         .search-bar {
             background: #fff;
             padding: 10px 12px;
@@ -103,13 +102,11 @@
             flex-shrink: 0;
         }
 
-        /* CARTE */
         #map {
             flex: 1;
             z-index: 1;
         }
 
-        /* HINT */
         .map-hint {
             background: rgba(44, 24, 16, 0.85);
             color: #fff;
@@ -119,7 +116,6 @@
             flex-shrink: 0;
         }
 
-        /* BARRE CONFIRMATION */
         .confirm-bar {
             background: #fff;
             border-top: 2px solid #FF6B35;
@@ -163,11 +159,9 @@
             cursor: not-allowed;
         }
 
-        /* STATUS */
         .status-msg {
             font-size: 12px;
             padding: 8px 12px;
-            border-radius: 8px;
             text-align: center;
             display: none;
             flex-shrink: 0;
@@ -185,7 +179,6 @@
             display: block;
         }
 
-        /* SUCCÈS */
         .success-screen {
             display: none;
             flex-direction: column;
@@ -233,6 +226,18 @@
             line-height: 1.6;
         }
 
+        .btn-track {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: #fff;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 
@@ -253,28 +258,27 @@
     </div>
 
     <div class="status-msg" id="status-msg"></div>
-
     <div id="map"></div>
-
     <div class="map-hint">👆 Cliquez sur la carte pour affiner l'emplacement exact</div>
 
     <div class="confirm-bar" id="confirm-bar">
         <div class="confirm-address" id="confirm-address"></div>
-        <button class="btn-confirm" id="btn-confirm" onclick="confirmLocation()">
-            ✅ Confirmer cette adresse
-        </button>
+        <button class="btn-confirm" id="btn-confirm" onclick="confirmLocation()">✅ Confirmer cette adresse</button>
     </div>
 
     <div class="success-screen" id="success-screen">
         <div class="success-icon">🎉</div>
-        <h2>Adresse enregistrée !</h2>
-        <p>Votre commande est confirmée. Un livreur sera chez vous dans <strong>20–30 minutes</strong>.</p>
-        <p style="font-size:12px;color:#aaa;margin-top:8px;">Vous pouvez fermer cette page.</p>
+        <h2>C'est parti !</h2>
+        <p>Votre commande est en préparation. Vous allez recevoir un message WhatsApp avec le lien de suivi.</p>
+        <a id="track-link" href="#" class="btn-track">📦 Suivre ma livraison</a>
+        <p style="font-size:11px;color:#aaa;margin-top:4px;">Vous pouvez aussi fermer cette page.</p>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
+        const RAILWAY_URL = 'https://bonmatin-bot-production.up.railway.app'; // ex: https://bonmatin-bot-production.up.railway.app
+
         const {
             createClient
         } = supabase;
@@ -287,13 +291,13 @@
             selectedLng = null,
             selectedAddr = '';
         let marker = null;
+        let commandeId = null;
 
         // ── CARTE ────────────────────────────────────────────────
         const map = L.map('map').setView([43.2965, 5.3698], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
-
         map.on('click', async e => {
             setPoint(e.latlng.lat, e.latlng.lng);
             selectedAddr = await reverseGeocode(e.latlng.lat, e.latlng.lng);
@@ -313,7 +317,7 @@
             }).addTo(map);
         }
 
-        // ── RECHERCHE ADRESSE ────────────────────────────────────
+        // ── RECHERCHE ────────────────────────────────────────────
         async function searchAddress() {
             const q = document.getElementById('search-input').value.trim();
             if (!q) return;
@@ -336,7 +340,7 @@
                 hideStatus();
                 showConfirm();
             } catch {
-                showStatus('Erreur réseau. Vérifiez votre connexion.', 'error');
+                showStatus('Erreur réseau.', 'error');
             }
         }
 
@@ -366,7 +370,6 @@
             );
         }
 
-        // ── REVERSE GEOCODING ────────────────────────────────────
         async function reverseGeocode(lat, lng) {
             try {
                 const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
@@ -377,31 +380,35 @@
             }
         }
 
-        // ── CONFIRMATION ─────────────────────────────────────────
         function showConfirm() {
             document.getElementById('confirm-address').textContent = `📍 ${selectedAddr}`;
             document.getElementById('confirm-bar').classList.add('show');
         }
 
+        // ── CONFIRMATION ─────────────────────────────────────────
         async function confirmLocation() {
             if (!selectedLat || !selectedLng) return;
             const btn = document.getElementById('btn-confirm');
             btn.disabled = true;
             btn.textContent = '⏳ Enregistrement...';
 
+            // 1. Met à jour la commande dans Supabase
             const {
+                data,
                 error
             } = await db.from('commandes')
                 .update({
                     latitude: selectedLat,
                     longitude: selectedLng,
                     adresse: selectedAddr,
-                    statut: 'pending'
+                    statut: 'preparation'
                 })
                 .eq('telephone', `whatsapp:+${telephone}`)
-                .eq('statut', 'awaiting_location');
+                .eq('statut', 'awaiting_location')
+                .select('id')
+                .single();
 
-            if (error) {
+            if (error || !data) {
                 console.error(error);
                 showStatus('Erreur lors de l\'enregistrement. Réessayez.', 'error');
                 btn.disabled = false;
@@ -409,7 +416,28 @@
                 return;
             }
 
-            // Succès
+            commandeId = data.id;
+
+            // 2. Appelle Railway pour envoyer le WhatsApp de confirmation
+            try {
+                await fetch(`${RAILWAY_URL}/notify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        telephone,
+                        commandeId
+                    }),
+                });
+            } catch (e) {
+                console.warn('Notify failed (non bloquant):', e.message);
+            }
+
+            // 3. Affiche l'écran succès avec lien de suivi
+            const trackUrl = `${window.location.origin}/track.html?id=${commandeId}`;
+            document.getElementById('track-link').href = trackUrl;
+
             document.querySelector('header').style.display = 'none';
             document.querySelector('.search-bar').style.display = 'none';
             document.querySelector('.map-hint').style.display = 'none';
@@ -419,7 +447,6 @@
             document.getElementById('success-screen').classList.add('show');
         }
 
-        // ── STATUS ───────────────────────────────────────────────
         function showStatus(msg, type) {
             const el = document.getElementById('status-msg');
             el.textContent = msg;
