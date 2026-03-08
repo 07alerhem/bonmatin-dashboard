@@ -8,128 +8,67 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: sans-serif; background: #F8F6F1; color: #1a1a1a; }
-
-    header {
-      background: linear-gradient(135deg, #2C1810, #5C3317);
-      color: #fff; padding: 20px 24px;
-    }
+    header { background: linear-gradient(135deg, #2C1810, #5C3317); color: #fff; padding: 20px 24px; }
     header h1 { font-size: 20px; font-weight: 700; }
     header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-
-    .stats {
-      display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;
-    }
-    .stat {
-      flex: 1; min-width: 80px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px; padding: 10px 12px;
-    }
+    .stats { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .stat { flex: 1; min-width: 80px; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; }
     .stat .val { font-size: 22px; font-weight: 800; }
     .stat .lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
-
-    .controls {
-      padding: 14px 16px; display: flex;
-      gap: 8px; flex-wrap: wrap; align-items: center;
-      background: #fff; border-bottom: 1px solid #eee;
-    }
-    .btn-filter {
-      padding: 6px 14px; border-radius: 20px; border: none;
-      cursor: pointer; font-size: 12px; font-weight: 600;
-      background: #E8E0D5; color: #5a4030; transition: all 0.2s;
-    }
+    .tabs { display: flex; background: #fff; border-bottom: 2px solid #eee; }
+    .tab { padding: 12px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #888; border: none; background: none; border-bottom: 3px solid transparent; transition: all 0.2s; }
+    .tab.active { color: #2C1810; border-bottom-color: #FF6B35; }
+    .controls { padding: 14px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fff; border-bottom: 1px solid #eee; }
+    .btn-filter { padding: 6px 14px; border-radius: 20px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: #E8E0D5; color: #5a4030; transition: all 0.2s; }
     .btn-filter.active { background: #2C1810; color: #fff; }
-
-    .slider-wrap {
-      display: flex; align-items: center; gap: 8px; margin-left: auto;
-    }
+    .slider-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; }
     .slider-wrap span { font-size: 11px; color: #888; }
     .slider-wrap strong { color: #FF6B35; font-size: 12px; }
-
     .main { display: flex; gap: 0; flex-wrap: wrap; }
-
-    .map-wrap {
-      background: #fff; margin: 16px;
-      border-radius: 14px; overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-      flex-shrink: 0;
-    }
-    .map-header {
-      padding: 10px 14px; border-bottom: 1px solid #eee;
-      font-size: 12px; color: #666;
-    }
+    .map-wrap { background: #fff; margin: 16px; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .map-header { padding: 10px 14px; border-bottom: 1px solid #eee; font-size: 12px; color: #666; }
     svg { display: block; background: #EAF4EA; }
-
     .panel { flex: 1; min-width: 260px; padding: 0 16px 16px; }
     .panel h2 { font-size: 13px; font-weight: 700; color: #2C1810; margin: 16px 0 8px; }
-
-    .cluster-card {
-      background: #fff; border: 2px solid #eee;
-      border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
-      transition: all 0.2s; cursor: pointer;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-    }
-    .cluster-card:hover { transform: translateY(-1px); }
-    .cluster-header {
-      display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
-    }
+    .cluster-card { background: #fff; border: 2px solid #eee; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; transition: all 0.2s; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+    .cluster-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .cluster-title { font-size: 12px; font-weight: 700; color: #333; }
     .cluster-total { margin-left: auto; font-size: 11px; color: #FF6B35; font-weight: 700; }
-
-    .order-row {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: #555; padding: 4px 6px;
-      border-radius: 6px; margin-bottom: 2px; cursor: pointer;
-      transition: background 0.15s;
-    }
+    .order-row { display: flex; justify-content: space-between; font-size: 11px; color: #555; padding: 4px 6px; border-radius: 6px; margin-bottom: 2px; cursor: pointer; transition: background 0.15s; }
     .order-row:hover { background: #f5f5f5; }
-
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.4); z-index: 200;
-      align-items: flex-end; justify-content: center;
-    }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; }
-    .modal {
-      background: #fff; border-radius: 16px 16px 0 0;
-      padding: 20px; width: 100%; max-width: 500px;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
+    .modal { background: #fff; border-radius: 16px 16px 0 0; padding: 20px; width: 100%; max-width: 520px; box-shadow: 0 -4px 20px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .modal-title { font-size: 16px; font-weight: 700; color: #2C1810; }
-    .modal-sub { font-size: 13px; color: #888; margin-top: 4px; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .btn-deliver {
-      flex: 1; padding: 12px; border: none; border-radius: 10px;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      color: #fff; font-weight: 700; font-size: 14px; cursor: pointer;
-    }
-    .btn-close {
-      padding: 12px 20px; border: none; border-radius: 10px;
-      background: #F0EDE8; color: #666; cursor: pointer; font-size: 14px;
-    }
-
-    .empty {
-      text-align: center; padding: 40px 20px;
-      color: #aaa; font-size: 14px;
-    }
-
-    .refresh-btn {
-      margin-left: auto; padding: 6px 14px; border-radius: 20px;
-      border: none; background: #FF6B35; color: #fff;
-      font-size: 12px; font-weight: 600; cursor: pointer;
-    }
-
-    .badge {
-      display: inline-block; padding: 2px 8px; border-radius: 20px;
-      font-size: 10px; font-weight: 700; margin-left: 6px;
-    }
+    .modal-sub { font-size: 13px; color: #666; margin-top: 6px; line-height: 1.6; }
+    .modal-address { background: #F8F6F1; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #444; margin-top: 8px; }
+    .nav-buttons { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn-nav { flex: 1; min-width: 100px; padding: 10px 12px; border: none; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: opacity 0.2s; }
+    .btn-nav:hover { opacity: 0.85; }
+    .btn-gmaps { background: #4285F4; color: #fff; }
+    .btn-waze { background: #33CCFF; color: #1a1a1a; }
+    .btn-plans { background: #FF6B35; color: #fff; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 12px; }
+    .btn-deliver { flex: 1; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
+    .btn-close-modal { padding: 12px 20px; border: none; border-radius: 10px; background: #F0EDE8; color: #666; cursor: pointer; font-size: 14px; }
+    .delivered-section { padding: 16px; }
+    .table-wrap { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
+    thead { background: #2C1810; color: #fff; }
+    thead th { padding: 10px 12px; text-align: left; font-weight: 600; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #f0ede8; transition: background 0.15s; }
+    tbody tr:hover { background: #faf8f5; }
+    tbody td { padding: 10px 12px; color: #444; }
+    .tag-delivered { display: inline-block; padding: 2px 8px; border-radius: 20px; background: #D1F2E1; color: #0a6640; font-size: 10px; font-weight: 700; }
+    .tag-moment { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+    .tag-matin { background: #FFF3CD; color: #856404; }
+    .tag-aprem { background: #E8D5F5; color: #5a1f8a; }
+    .empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
+    .refresh-btn { margin-left: auto; padding: 6px 14px; border-radius: 20px; border: none; background: #FF6B35; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-left: 4px; }
     .badge.pending { background: #FFF3CD; color: #856404; }
-    .badge.delivered { background: #D1F2E1; color: #0a6640; }
   </style>
 </head>
 <body>
@@ -145,66 +84,98 @@
   </div>
 </header>
 
-<div class="controls">
-  <button class="btn-filter active" onclick="setFilter('all')">Tout</button>
-  <button class="btn-filter" onclick="setFilter('matin')">🌅 Matin</button>
-  <button class="btn-filter" onclick="setFilter('aprem')">🍰 Après-midi</button>
-  <div class="slider-wrap">
-    <span>Rayon :</span>
-    <input type="range" min="0.3" max="2" step="0.1" value="0.8"
-      oninput="maxKm = parseFloat(this.value); document.getElementById('km-val').textContent = this.value + ' km'; render();" />
-    <strong id="km-val">0.8 km</strong>
-  </div>
-  <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('livraisons', this)">🚴 En cours</button>
+  <button class="tab" onclick="switchTab('livres', this)">✅ Livrées</button>
 </div>
 
-<div class="main">
-  <div class="map-wrap">
-    <div class="map-header">
-      📍 Carte · <span style="color:#FF6B35;font-weight:700;">Coloré = en attente</span> · Gris = livré
+<!-- TAB LIVRAISONS -->
+<div id="tab-livraisons">
+  <div class="controls">
+    <button class="btn-filter active" onclick="setFilter('all', event)">Tout</button>
+    <button class="btn-filter" onclick="setFilter('matin', event)">🌅 Matin</button>
+    <button class="btn-filter" onclick="setFilter('aprem', event)">🍰 Après-midi</button>
+    <div class="slider-wrap">
+      <span>Rayon :</span>
+      <input type="range" min="0.3" max="2" step="0.1" value="0.8"
+        oninput="maxKm = parseFloat(this.value); document.getElementById('km-val').textContent = this.value + ' km'; render();" />
+      <strong id="km-val">0.8 km</strong>
     </div>
-    <svg id="map" width="480" height="340"></svg>
+    <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
   </div>
-  <div class="panel">
-    <h2 id="cluster-title">Tournées suggérées</h2>
-    <div id="clusters-list"></div>
+  <div class="main">
+    <div class="map-wrap">
+      <div class="map-header">📍 Carte · <span style="color:#FF6B35;font-weight:700;">Coloré = en attente</span> · Gris = livré</div>
+      <svg id="map" width="480" height="340"></svg>
+    </div>
+    <div class="panel">
+      <h2 id="cluster-title">Tournées suggérées</h2>
+      <div id="clusters-list"></div>
+    </div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- TAB LIVRÉES -->
+<div id="tab-livres" style="display:none;">
+  <div class="delivered-section">
+    <div style="display:flex;align-items:center;margin-bottom:12px;">
+      <h2 style="margin:0;font-size:14px;font-weight:700;color:#2C1810;">✅ Commandes livrées</h2>
+      <button class="refresh-btn" onclick="loadOrders()">🔄 Actualiser</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Client</th><th>Commande</th><th>Adresse</th>
+            <th>Total</th><th>Heure</th><th>Moment</th><th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="delivered-tbody">
+          <tr><td colspan="8" class="empty">Aucune livraison pour l'instant</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="delivered-total" style="text-align:right;margin-top:10px;font-weight:700;color:#2C1810;font-size:13px;"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
-  <div class="modal">
+  <div class="modal" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div>
+      <div style="flex:1">
         <div class="modal-title" id="modal-title"></div>
         <div class="modal-sub" id="modal-sub"></div>
+        <div class="modal-address" id="modal-address"></div>
+        <div class="nav-buttons" id="nav-buttons"></div>
       </div>
-      <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888">✕</button>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;margin-left:10px;">✕</button>
     </div>
     <div class="modal-actions">
       <button class="btn-deliver" id="btn-deliver">✅ Marquer comme livré</button>
-      <button class="btn-close" onclick="closeModal()">Fermer</button>
+      <button class="btn-close-modal" onclick="closeModal()">Fermer</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ── CONFIG — remplacez par vos vraies valeurs ───────────
-  const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
+  const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+  const SUPABASE_KEY = 'VOTRE_SUPABASE_KEY';
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── STATE ───────────────────────────────────────────────
-  let allOrders = [];
-  let filterSlot = 'all';
-  let maxKm = 0.8;
-  let hoveredCluster = null;
-  let selectedOrder = null;
+  let allOrders = [], filterSlot = 'all', maxKm = 0.8, hoveredCluster = null;
   const W = 480, H = 340;
   const COLORS = ['#FF6B35','#4ECDC4','#45B7D1','#96CEB4','#F7931E','#DDA0DD'];
 
-  // ── LOAD ────────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    document.getElementById('tab-livraisons').style.display = tab === 'livraisons' ? 'block' : 'none';
+    document.getElementById('tab-livres').style.display = tab === 'livres' ? 'block' : 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'livres') renderDelivered();
+  }
+
   async function loadOrders() {
     const { data, error } = await db.from('commandes').select('*');
     if (error) { console.error(error); return; }
@@ -212,11 +183,10 @@
     render();
   }
 
-  // ── FILTER ──────────────────────────────────────────────
-  function setFilter(slot) {
+  function setFilter(slot, e) {
     filterSlot = slot;
     document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (e && e.target) e.target.classList.add('active');
     render();
   }
 
@@ -224,8 +194,8 @@
     return filterSlot === 'all' ? allOrders : allOrders.filter(o => o.moment === filterSlot);
   }
 
-  // ── CLUSTERING ──────────────────────────────────────────
   function dist(a, b) {
+    if (!a.latitude || !b.latitude) return 999;
     const dx = (a.latitude - b.latitude) * 111;
     const dy = (a.longitude - b.longitude) * 85;
     return Math.sqrt(dx * dx + dy * dy);
@@ -233,8 +203,7 @@
 
   function cluster(orders) {
     const pending = orders.filter(o => o.statut === 'pending');
-    const clusters = [];
-    const visited = new Set();
+    const clusters = [], visited = new Set();
     for (const o of pending) {
       if (visited.has(o.id)) continue;
       const c = [o]; visited.add(o.id);
@@ -247,11 +216,11 @@
     return clusters;
   }
 
-  // ── MAP ─────────────────────────────────────────────────
   function toPixel(lat, lng, bounds) {
-    const x = ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * W;
-    const y = H - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * H;
-    return { x, y };
+    return {
+      x: ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * W,
+      y: H - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * H
+    };
   }
 
   function svgEl(tag, attrs, parent) {
@@ -264,129 +233,116 @@
   function renderMap(filtered, clusters) {
     const svg = document.getElementById('map');
     svg.innerHTML = '';
-
     const hasGps = filtered.filter(o => o.latitude && o.longitude);
     if (hasGps.length === 0) {
-      const txt = svgEl('text', { x: W/2, y: H/2, 'text-anchor': 'middle', fill: '#aaa', 'font-size': '14' }, svg);
-      txt.textContent = 'Aucune commande avec localisation';
+      const t = svgEl('text', { x: W/2, y: H/2, 'text-anchor': 'middle', fill: '#aaa', 'font-size': '12' }, svg);
+      t.textContent = 'Adresses textuelles — carte non disponible';
       return;
     }
-
     const bounds = {
       minLat: Math.min(...hasGps.map(o => o.latitude)) - 0.003,
       maxLat: Math.max(...hasGps.map(o => o.latitude)) + 0.003,
       minLng: Math.min(...hasGps.map(o => o.longitude)) - 0.005,
       maxLng: Math.max(...hasGps.map(o => o.longitude)) + 0.005,
     };
-
-    // Grille
-    [0.25, 0.5, 0.75].forEach(f => {
-      svgEl('line', { x1:0, y1:H*f, x2:W, y2:H*f, stroke:'#C8DFC8', 'stroke-width':'0.5' }, svg);
-      svgEl('line', { x1:W*f, y1:0, x2:W*f, y2:H, stroke:'#C8DFC8', 'stroke-width':'0.5' }, svg);
+    [0.25,0.5,0.75].forEach(f => {
+      svgEl('line',{x1:0,y1:H*f,x2:W,y2:H*f,stroke:'#C8DFC8','stroke-width':'0.5'},svg);
+      svgEl('line',{x1:W*f,y1:0,x2:W*f,y2:H,stroke:'#C8DFC8','stroke-width':'0.5'},svg);
     });
-
-    // Lignes clusters
-    clusters.forEach((c, ci) => {
+    clusters.forEach((c,ci) => {
       if (c.length < 2) return;
-      const color = COLORS[ci % COLORS.length];
-      const pts = c.filter(o => o.latitude).map(o => toPixel(o.latitude, o.longitude, bounds));
-      pts.slice(0, -1).forEach((p, i) => {
-        svgEl('line', {
-          x1: p.x, y1: p.y, x2: pts[i+1].x, y2: pts[i+1].y,
-          stroke: color, 'stroke-width': hoveredCluster === ci ? 3 : 1.5,
-          'stroke-dasharray': '5,3', opacity: 0.7
-        }, svg);
-      });
+      const color = COLORS[ci%COLORS.length];
+      const pts = c.filter(o=>o.latitude).map(o=>toPixel(o.latitude,o.longitude,bounds));
+      pts.slice(0,-1).forEach((p,i) => svgEl('line',{x1:p.x,y1:p.y,x2:pts[i+1].x,y2:pts[i+1].y,stroke:color,'stroke-width':hoveredCluster===ci?3:1.5,'stroke-dasharray':'5,3',opacity:0.7},svg));
     });
-
-    // Points livrés
-    filtered.filter(o => o.statut === 'delivered' && o.latitude).forEach(o => {
-      const p = toPixel(o.latitude, o.longitude, bounds);
-      svgEl('circle', { cx: p.x, cy: p.y, r: 5, fill: '#bbb', opacity: 0.5 }, svg);
+    filtered.filter(o=>o.statut==='delivered'&&o.latitude).forEach(o => {
+      const p = toPixel(o.latitude,o.longitude,bounds);
+      svgEl('circle',{cx:p.x,cy:p.y,r:5,fill:'#bbb',opacity:0.5},svg);
     });
-
-    // Points pending
-    filtered.filter(o => o.statut === 'pending' && o.latitude).forEach(o => {
-      const ci = clusters.findIndex(c => c.some(x => x.id === o.id));
-      const color = ci >= 0 ? COLORS[ci % COLORS.length] : '#aaa';
-      const p = toPixel(o.latitude, o.longitude, bounds);
-      const isHov = hoveredCluster === ci;
-      const g = svgEl('g', { style: 'cursor:pointer' }, svg);
-      g.addEventListener('mouseenter', () => { hoveredCluster = ci; });
-      g.addEventListener('mouseleave', () => { hoveredCluster = null; });
-      g.addEventListener('click', () => openModal(o));
-      svgEl('circle', {
-        cx: p.x, cy: p.y, r: isHov ? 11 : 9,
-        fill: color, stroke: '#fff', 'stroke-width': 2
-      }, g);
-      const t = svgEl('text', { x: p.x, y: p.y + 4, 'text-anchor': 'middle', 'font-size': 9, fill: '#fff', 'font-weight': 'bold' }, g);
+    filtered.filter(o=>o.statut==='pending'&&o.latitude).forEach(o => {
+      const ci = clusters.findIndex(c=>c.some(x=>x.id===o.id));
+      const color = ci>=0?COLORS[ci%COLORS.length]:'#aaa';
+      const p = toPixel(o.latitude,o.longitude,bounds);
+      const g = svgEl('g',{style:'cursor:pointer'},svg);
+      g.addEventListener('mouseenter',()=>{hoveredCluster=ci;});
+      g.addEventListener('mouseleave',()=>{hoveredCluster=null;});
+      g.addEventListener('click',()=>openModal(o));
+      svgEl('circle',{cx:p.x,cy:p.y,r:hoveredCluster===ci?11:9,fill:color,stroke:'#fff','stroke-width':2},g);
+      const t = svgEl('text',{x:p.x,y:p.y+4,'text-anchor':'middle','font-size':9,fill:'#fff','font-weight':'bold'},g);
       t.textContent = o.id;
     });
-
-    // Labels tournées
-    clusters.forEach((c, ci) => {
-      const withGps = c.filter(o => o.latitude);
+    clusters.forEach((c,ci) => {
+      const withGps = c.filter(o=>o.latitude);
       if (!withGps.length) return;
-      const color = COLORS[ci % COLORS.length];
-      const pts = withGps.map(o => toPixel(o.latitude, o.longitude, bounds));
-      const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-      const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-      const t = svgEl('text', {
-        x: cx, y: cy - 16, 'text-anchor': 'middle',
-        'font-size': 9, fill: color, 'font-weight': 'bold',
-        'font-family': 'sans-serif', opacity: 0.9
-      }, svg);
+      const color = COLORS[ci%COLORS.length];
+      const pts = withGps.map(o=>toPixel(o.latitude,o.longitude,bounds));
+      const cx = pts.reduce((s,p)=>s+p.x,0)/pts.length;
+      const cy = pts.reduce((s,p)=>s+p.y,0)/pts.length;
+      const t = svgEl('text',{x:cx,y:cy-16,'text-anchor':'middle','font-size':9,fill:color,'font-weight':'bold','font-family':'sans-serif',opacity:0.9},svg);
       t.textContent = `Tournée ${ci+1} (${c.length})`;
     });
   }
 
-  // ── CLUSTERS LIST ───────────────────────────────────────
   function renderList(clusters) {
     const el = document.getElementById('clusters-list');
     document.getElementById('cluster-title').textContent = `Tournées suggérées (${clusters.length})`;
-    if (clusters.length === 0) {
-      el.innerHTML = '<div class="empty">Aucune commande en attente</div>';
-      return;
-    }
+    if (clusters.length === 0) { el.innerHTML = '<div class="empty">Aucune commande en attente</div>'; return; }
     el.innerHTML = '';
-    clusters.forEach((c, ci) => {
-      const color = COLORS[ci % COLORS.length];
-      const total = c.reduce((s, o) => s + (o.total || 0), 0);
+    clusters.forEach((c,ci) => {
+      const color = COLORS[ci%COLORS.length];
+      const total = c.reduce((s,o)=>s+(o.total||0),0);
       const card = document.createElement('div');
       card.className = 'cluster-card';
-      card.style.borderColor = hoveredCluster === ci ? color : '#eee';
-      card.style.background = hoveredCluster === ci ? `${color}12` : '#fff';
-      card.addEventListener('mouseenter', () => { hoveredCluster = ci; });
-      card.addEventListener('mouseleave', () => { hoveredCluster = null; });
+      card.style.borderColor = hoveredCluster===ci?color:'#eee';
+      card.style.background = hoveredCluster===ci?`${color}12`:'#fff';
+      card.addEventListener('mouseenter',()=>{hoveredCluster=ci;});
+      card.addEventListener('mouseleave',()=>{hoveredCluster=null;});
       card.innerHTML = `
         <div class="cluster-header">
           <div class="dot" style="background:${color}"></div>
-          <span class="cluster-title">Tournée ${ci+1} · ${c.length} livraison${c.length > 1 ? 's' : ''}</span>
+          <span class="cluster-title">Tournée ${ci+1} · ${c.length} livraison${c.length>1?'s':''}</span>
           <span class="cluster-total">${total.toFixed(2)}€</span>
         </div>
-        ${c.map(o => `
-          <div class="order-row" onclick="openModal(${JSON.stringify(o).replace(/"/g, '&quot;')})">
+        ${c.map(o=>`
+          <div class="order-row" onclick='openModal(${JSON.stringify(o).replace(/'/g,"&#39;")})'>
             <span>#${o.id} ${o.client} <span class="badge pending">⏳</span></span>
-            <span style="color:#888">${o.heure || ''}</span>
+            <span style="color:#888">${o.heure||''}</span>
           </div>
-        `).join('')}
-      `;
+        `).join('')}`;
       el.appendChild(card);
     });
   }
 
-  // ── STATS ───────────────────────────────────────────────
   function renderStats(filtered, clusters) {
-    const pending = filtered.filter(o => o.statut === 'pending').length;
-    const delivered = filtered.filter(o => o.statut === 'delivered').length;
-    const ca = allOrders.reduce((s, o) => s + (o.total || 0), 0);
-    document.getElementById('stat-pending').textContent = pending;
-    document.getElementById('stat-delivered').textContent = delivered;
+    document.getElementById('stat-pending').textContent = filtered.filter(o=>o.statut==='pending').length;
+    document.getElementById('stat-delivered').textContent = filtered.filter(o=>o.statut==='delivered').length;
     document.getElementById('stat-clusters').textContent = clusters.length;
-    document.getElementById('stat-ca').textContent = ca.toFixed(2) + '€';
+    document.getElementById('stat-ca').textContent = allOrders.reduce((s,o)=>s+(o.total||0),0).toFixed(2)+'€';
   }
 
-  // ── RENDER ──────────────────────────────────────────────
+  function renderDelivered() {
+    const delivered = allOrders.filter(o=>o.statut==='delivered');
+    const tbody = document.getElementById('delivered-tbody');
+    if (delivered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="empty">Aucune livraison pour l\'instant</td></tr>';
+      document.getElementById('delivered-total').textContent = '';
+      return;
+    }
+    const total = delivered.reduce((s,o)=>s+(o.total||0),0);
+    tbody.innerHTML = delivered.map(o=>`
+      <tr>
+        <td style="color:#aaa">#${o.id}</td>
+        <td style="font-weight:600">${o.client||'–'}</td>
+        <td>${o.article||'–'}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.adresse||''}">${o.adresse||(o.latitude?'📍 GPS':'–')}</td>
+        <td style="font-weight:700;color:#2C1810">${(o.total||0).toFixed(2)}€</td>
+        <td>${o.heure||'–'}</td>
+        <td><span class="tag-moment tag-${o.moment}">${o.moment==='matin'?'🌅 Matin':'🍰 Après-midi'}</span></td>
+        <td><span class="tag-delivered">✅ Livré</span></td>
+      </tr>`).join('');
+    document.getElementById('delivered-total').textContent = `Total encaissé : ${total.toFixed(2)}€`;
+  }
+
   function render() {
     const filtered = getFiltered();
     const clusters = cluster(filtered);
@@ -395,20 +351,31 @@
     renderList(clusters);
   }
 
-  // ── MODAL ───────────────────────────────────────────────
+  function buildNavLinks(order) {
+    const addr = order.adresse || '';
+    const lat = order.latitude, lng = order.longitude;
+    const q = lat ? `${lat},${lng}` : encodeURIComponent(addr);
+    const ae = encodeURIComponent(addr);
+    const gmaps = lat ? `https://www.google.com/maps/dir/?api=1&destination=${q}` : `https://www.google.com/maps/dir/?api=1&destination=${ae}`;
+    const waze = lat ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : `https://waze.com/ul?q=${ae}&navigate=yes`;
+    const plans = lat ? `https://maps.apple.com/?daddr=${lat},${lng}` : `https://maps.apple.com/?daddr=${ae}`;
+    return `
+      <a href="${gmaps}" target="_blank" class="btn-nav btn-gmaps">🗺️ Google Maps</a>
+      <a href="${waze}" target="_blank" class="btn-nav btn-waze">🚗 Waze</a>
+      <a href="${plans}" target="_blank" class="btn-nav btn-plans">🍎 Plans</a>`;
+  }
+
   function openModal(order) {
-    selectedOrder = order;
     document.getElementById('modal-title').textContent = `#${order.id} — ${order.client}`;
-    document.getElementById('modal-sub').innerHTML =
-      `📦 ${order.article} × ${order.quantite}<br>` +
-      `⏰ ${order.heure || '–'} &nbsp;·&nbsp; 💰 ${(order.total || 0).toFixed(2)}€<br>` +
-      `📍 ${order.latitude?.toFixed(5) || '–'}, ${order.longitude?.toFixed(5) || '–'}`;
+    document.getElementById('modal-sub').innerHTML = `📦 ${order.article}<br>⏰ ${order.heure||'–'} &nbsp;·&nbsp; 💰 ${(order.total||0).toFixed(2)}€`;
+    document.getElementById('modal-address').innerHTML = `📍 ${order.adresse||(order.latitude?`GPS : ${order.latitude?.toFixed(5)}, ${order.longitude?.toFixed(5)}`:'Adresse non renseignée')}`;
+    document.getElementById('nav-buttons').innerHTML = buildNavLinks(order);
     document.getElementById('btn-deliver').onclick = () => markDelivered(order.id);
     document.getElementById('overlay').classList.add('open');
   }
 
   function closeModal(e) {
-    if (!e || e.target === document.getElementById('overlay') || e.currentTarget === document.querySelector('.btn-close')) {
+    if (!e || e.target === document.getElementById('overlay')) {
       document.getElementById('overlay').classList.remove('open');
     }
   }
@@ -419,7 +386,6 @@
     await loadOrders();
   }
 
-  // ── INIT ────────────────────────────────────────────────
   loadOrders();
   setInterval(loadOrders, 30000);
 </script>
