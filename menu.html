@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lasagna Mia — Notre menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: sans-serif;
+            background: #1a0f0a;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(135deg, #2C1810, #5C3317);
+            color: #fff;
+            padding: 20px 20px 16px;
+            text-align: center;
+        }
+
+        header .logo {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        header p {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: rgba(255, 107, 53, 0.3);
+            color: #FF6B35;
+            border: 1px solid #FF6B35;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-wrap {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px 16px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: block;
+        }
+
+        .order-cta {
+            width: 100%;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
+            cursor: pointer;
+        }
+
+        .horaires {
+            width: 100%;
+            background: #2C1810;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fff;
+        }
+
+        .horaires h3 {
+            font-size: 12px;
+            font-weight: 700;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .horaire-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .horaire-row:last-child {
+            border-bottom: none;
+        }
+
+        .horaire-row .jour {
+            font-weight: 600;
+        }
+
+        .horaire-row .heure {
+            color: #FF6B35;
+            font-weight: 700;
+        }
+
+        .horaire-row .ferme {
+            color: #666;
+            font-style: italic;
+        }
+
+        footer {
+            padding: 16px;
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">🥐</div>
+        <h1>Lasagna Mia</h1>
+        <p>Des douceurs livrés à domicile</p>
+        <div class="badge">🛵 Livraison à domicile</div>
+    </header>
+
+    <div class="menu-wrap">
+
+        <img class="menu-img" src="./menu.jpeg" alt="Notre menu BonMatin" />
+
+        <a href="https://wa.me/14155238886" class="order-cta">
+            💬 Commander sur WhatsApp
+        </a>
+
+        <div class="horaires">
+            <h3>Jours & horaires de commandes</h3>
+            <div class="horaire-row"><span class="jour">Lundi</span><span class="ferme">Fermé</span></div>
+            <div class="horaire-row"><span class="jour">Mardi</span><span class="ferme">Fermé</span></div>
+            <div class="horaire-row"><span class="jour">Mercredi</span><span class="heure">7h00 – 11h00</span></div>
+            <div class="horaire-row"><span class="jour">Jeudi</span><span class="ferme">Fermé</span></div>
+            <div class="horaire-row"><span class="jour">Vendredi</span><span class="heure">7h00 – 11h00</span></div>
+            <div class="horaire-row"><span class="jour">Samedi</span><span class="heure">7h00 – 11h00</span></div>
+            <div class="horaire-row"><span class="jour">Dimanche</span><span class="ferme">Fermé</span></div>
+        </div>
+
+    </div>
+
+    <footer>© Lasagna Mia — Livraisons fraîches chaque matin</footer>
+
+</body>
+
+</html>
