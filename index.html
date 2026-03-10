@@ -1,617 +1,1231 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lasagna Mia — Livraisons</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --bg:      #0f0b08;
-      --bg2:     #1a1209;
-      --bg3:     #231808;
-      --card:    #1e1510;
-      --border:  #2e1f10;
-      --gold:    #c8965a;
-      --gold2:   #e8b87a;
-      --cream:   #f5ead8;
-      --muted:   #7a5c3a;
-      --text:    #f0e6d3;
-      --text2:   #a08060;
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lasagna Mia — Livraisons</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg: #0f0b08;
+            --bg2: #1a1209;
+            --bg3: #231808;
+            --card: #1e1510;
+            --border: #2e1f10;
+            --gold: #c8965a;
+            --gold2: #e8b87a;
+            --cream: #f5ead8;
+            --muted: #7a5c3a;
+            --text: #f0e6d3;
+            --text2: #a08060;
 
-      --s-attente:     #f39c12;
-      --s-prep:        #3498db;
-      --s-route:       #e67e22;
-      --s-imminent:    #e74c3c;
-      --s-delivered:   #27ae60;
-    }
+            --s-attente: #f39c12;
+            --s-prep: #3498db;
+            --s-route: #e67e22;
+            --s-imminent: #e74c3c;
+            --s-delivered: #27ae60;
+        }
 
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ── HEADER ─────────────────────────────────────── */
-    header {
-      background: linear-gradient(135deg, #1a0f06, #2e1a0a);
-      border-bottom: 1px solid var(--border);
-      padding: 18px 20px 14px;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .header-top { display:flex; align-items:center; justify-content:space-between; }
-    .header-brand { display:flex; align-items:center; gap:10px; }
-    .header-brand .logo { font-size:26px; }
-    .header-brand h1 { font-family:'Playfair Display',serif; font-size:17px; color:var(--gold2); }
-    .header-brand p { font-size:10px; color:var(--muted); margin-top:1px; }
-    .btn-refresh {
-      padding:7px 14px; border-radius:8px; border:1px solid var(--border);
-      background:var(--bg3); color:var(--text2); font-size:12px; font-weight:600;
-      cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s;
-      display:flex; align-items:center; gap:6px;
-    }
-    .btn-refresh:hover { border-color:var(--gold); color:var(--gold); }
-    .btn-refresh.spin .icon { display:inline-block; animation:spin 0.8s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-    /* STATS */
-    .stats-row {
-      display:grid; grid-template-columns:repeat(4,1fr);
-      gap:8px; margin-top:14px;
-    }
-    .stat {
-      background:rgba(255,255,255,0.04); border:1px solid var(--border);
-      border-radius:8px; padding:9px 10px; text-align:center;
-    }
-    .stat .val { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold2); line-height:1; }
-    .stat .lbl { font-size:9px; color:var(--muted); margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
+        /* ── HEADER ─────────────────────────────────────── */
+        header {
+            background: linear-gradient(135deg, #1a0f06, #2e1a0a);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 20px 14px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
 
-    /* ── TABS ───────────────────────────────────────── */
-    .tabs {
-      display:flex; background:var(--bg2);
-      border-bottom:1px solid var(--border);
-    }
-    .tab {
-      flex:1; padding:12px; text-align:center; cursor:pointer;
-      font-size:13px; font-weight:600; color:var(--muted);
-      border:none; background:none; border-bottom:2px solid transparent;
-      transition:all 0.2s; font-family:'DM Sans',sans-serif;
-    }
-    .tab.active { color:var(--gold2); border-bottom-color:var(--gold); }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    /* ── SECTION EN COURS ───────────────────────────── */
-    .en-cours { display:block; }
-    .livrees   { display:none; }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    /* Slider rayon */
-    .controls {
-      padding:10px 16px; display:flex; align-items:center; gap:10px;
-      background:var(--bg2); border-bottom:1px solid var(--border); flex-wrap:wrap;
-    }
-    .controls label { font-size:11px; color:var(--muted); }
-    .controls input[type=range] { accent-color:var(--gold); flex:1; min-width:80px; max-width:140px; }
-    .controls strong { font-size:12px; color:var(--gold2); min-width:42px; }
+        .header-brand .logo {
+            font-size: 26px;
+        }
 
-    /* Légende statuts */
-    .legend {
-      display:flex; gap:12px; flex-wrap:wrap; padding:10px 16px;
-      background:var(--bg2); border-bottom:1px solid var(--border);
-    }
-    .legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text2); }
-    .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .header-brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: var(--gold2);
+        }
 
-    /* ── CARTE SVG ──────────────────────────────────── */
-    .map-section {
-      margin:14px 14px 0;
-      background:var(--card); border:1px solid var(--border);
-      border-radius:12px; overflow:hidden;
-    }
-    .map-header {
-      padding:9px 14px; border-bottom:1px solid var(--border);
-      font-size:11px; color:var(--muted);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    svg#map { display:block; width:100%; height:260px; background:#12180f; }
+        .header-brand p {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
 
-    /* ── GROUPES PAR STATUT ─────────────────────────── */
-    .orders-wrap { padding:14px; display:flex; flex-direction:column; gap:16px; }
+        .btn-refresh {
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text2);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .group-title {
-      display:flex; align-items:center; gap:8px;
-      font-size:11px; font-weight:700; text-transform:uppercase;
-      letter-spacing:1px; margin-bottom:8px;
-    }
-    .group-title .gdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .group-title .gcount {
-      margin-left:auto; font-size:10px; font-weight:600;
-      padding:2px 8px; border-radius:20px; background:var(--bg3);
-      color:var(--text2); border:1px solid var(--border);
-    }
+        .btn-refresh:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
 
-    /* Cartes commande */
-    .order-card {
-      background:var(--card); border:1px solid var(--border);
-      border-radius:10px; padding:12px 14px; cursor:pointer;
-      transition:all 0.2s; margin-bottom:6px;
-      display:flex; align-items:center; gap:12px;
-    }
-    .order-card:last-child { margin-bottom:0; }
-    .order-card:hover { border-color:var(--gold); transform:translateX(2px); }
-    .order-card:active { transform:scale(0.98); }
+        .btn-refresh.spin .icon {
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+        }
 
-    .order-card .status-bar {
-      width:3px; border-radius:4px; align-self:stretch; flex-shrink:0;
-    }
-    .order-card .info { flex:1; min-width:0; }
-    .order-card .name { font-size:13px; font-weight:600; color:var(--cream); }
-    .order-card .detail {
-      font-size:11px; color:var(--text2); margin-top:2px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .order-card .right { text-align:right; flex-shrink:0; }
-    .order-card .price { font-family:'Playfair Display',serif; font-size:14px; color:var(--gold2); }
-    .order-card .time { font-size:10px; color:var(--muted); margin-top:2px; }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
 
-    .status-badge {
-      display:inline-flex; align-items:center; gap:4px;
-      padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700;
-      margin-top:4px;
-    }
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 14px;
+        }
 
-    /* Commandes sans GPS (attente adresse) */
-    .no-gps-badge {
-      display:inline-block; padding:1px 7px; border-radius:20px;
-      font-size:9px; font-weight:700; background:rgba(243,156,18,0.15);
-      color:var(--s-attente); border:1px solid rgba(243,156,18,0.3);
-      margin-left:6px;
-    }
+        .stat {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 10px;
+            text-align: center;
+        }
 
-    /* Cluster cards */
-    .cluster-group { margin-bottom:14px; }
-    .cluster-header {
-      display:flex; align-items:center; gap:8px; margin-bottom:6px;
-    }
-    .cluster-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-    .cluster-name { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; }
-    .cluster-total { margin-left:auto; font-size:11px; color:var(--gold); font-weight:700; }
+        .stat .val {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--gold2);
+            line-height: 1;
+        }
 
-    /* ── ONGLET LIVRÉES ─────────────────────────────── */
-    .livrees-content { padding:14px; }
-    .table-scroll { border-radius:10px; overflow:hidden; border:1px solid var(--border); overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; min-width:500px; }
-    thead { background:var(--bg3); }
-    thead th {
-      padding:10px 12px; text-align:left; font-size:9px;
-      font-weight:700; color:var(--muted); text-transform:uppercase;
-      letter-spacing:1px; white-space:nowrap;
-    }
-    tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; }
-    tbody tr:last-child { border-bottom:none; }
-    tbody tr:hover { background:var(--bg3); }
-    tbody td { padding:10px 12px; font-size:12px; color:var(--text2); }
-    tbody td:first-child { color:var(--text); font-weight:500; }
-    .tag-ok { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; background:rgba(39,174,96,0.15); color:var(--s-delivered); border:1px solid rgba(39,174,96,0.3); }
-    .livrees-total { text-align:right; margin-top:12px; font-size:13px; font-weight:700; color:var(--gold2); }
-    .empty { text-align:center; padding:40px; color:var(--muted); font-size:13px; }
+        .stat .lbl {
+            font-size: 9px;
+            color: var(--muted);
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    /* ── MODAL ──────────────────────────────────────── */
-    .overlay {
-      display:none; position:fixed; inset:0;
-      background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
-      z-index:200; align-items:flex-end; justify-content:center;
-    }
-    .overlay.open { display:flex; }
-    .modal {
-      background:var(--card); border:1px solid var(--border);
-      border-radius:16px 16px 0 0; width:100%; max-width:520px;
-      max-height:88vh; overflow-y:auto;
-      box-shadow:0 -8px 40px rgba(0,0,0,0.5);
-      animation:slideUp 0.3s cubic-bezier(.2,.8,.3,1);
-    }
-    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+        /* ── TABS ───────────────────────────────────────── */
+        .tabs {
+            display: flex;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+        }
 
-    .modal-handle {
-      width:36px; height:4px; border-radius:4px;
-      background:var(--border); margin:12px auto 0;
-    }
-    .modal-header {
-      padding:14px 18px 12px; border-bottom:1px solid var(--border);
-      display:flex; align-items:flex-start; justify-content:space-between;
-    }
-    .modal-name { font-family:'Playfair Display',serif; font-size:17px; color:var(--cream); }
-    .modal-meta { font-size:12px; color:var(--text2); margin-top:4px; line-height:1.6; }
-    .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; padding:2px 6px; }
-    .modal-close:hover { color:var(--text); }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
 
-    .modal-body { padding:16px 18px; }
+        .tab.active {
+            color: var(--gold2);
+            border-bottom-color: var(--gold);
+        }
 
-    .modal-address {
-      background:var(--bg3); border:1px solid var(--border);
-      border-radius:8px; padding:10px 12px; font-size:12px;
-      color:var(--text2); margin-bottom:14px; line-height:1.5;
-    }
+        /* ── SECTION EN COURS ───────────────────────────── */
+        .en-cours {
+            display: block;
+        }
 
-    .nav-btns { display:flex; gap:8px; margin-bottom:16px; }
-    .btn-nav {
-      flex:1; padding:10px 8px; border:none; border-radius:8px;
-      font-size:11px; font-weight:700; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; gap:5px;
-      text-decoration:none; transition:opacity 0.2s; font-family:'DM Sans',sans-serif;
-    }
-    .btn-nav:hover { opacity:0.85; }
-    .btn-gmaps { background:#4285F4; color:#fff; }
-    .btn-waze  { background:#33CCFF; color:#1a1a1a; }
-    .btn-plans { background:#FF6B35; color:#fff; }
+        .livrees {
+            display: none;
+        }
 
-    .statut-section-title {
-      font-size:10px; font-weight:700; color:var(--muted);
-      text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;
-    }
-    .statut-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .btn-statut {
-      padding:11px 8px; border:1.5px solid var(--border);
-      border-radius:10px; background:var(--bg3); cursor:pointer;
-      font-size:12px; font-weight:600; text-align:center;
-      color:var(--text2); transition:all 0.2s;
-      font-family:'DM Sans',sans-serif;
-    }
-    .btn-statut:hover { border-color:var(--gold); color:var(--gold); }
-    .btn-statut.active-statut { border-color:var(--gold); background:rgba(200,150,90,0.12); color:var(--gold2); }
-    .btn-livrer {
-      grid-column:1/-1; margin-top:2px;
-      padding:13px; border:none; border-radius:10px;
-      background:linear-gradient(135deg,#27ae60,#1a7a42);
-      color:#fff; font-size:14px; font-weight:700;
-      cursor:pointer; font-family:'DM Sans',sans-serif;
-      box-shadow:0 4px 14px rgba(39,174,96,0.3); transition:opacity 0.2s;
-    }
-    .btn-livrer:hover { opacity:0.9; }
-    .btn-fermer {
-      width:100%; margin-top:10px; padding:11px;
-      background:var(--bg3); border:1px solid var(--border);
-      border-radius:10px; color:var(--text2); font-size:13px;
-      cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s;
-    }
-    .btn-fermer:hover { color:var(--text); }
+        /* Slider rayon */
+        .controls {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
 
-    /* pulse animation for imminent */
-    @keyframes pulse-ring {
-      0%   { box-shadow:0 0 0 0 rgba(231,76,60,0.5); }
-      70%  { box-shadow:0 0 0 8px rgba(231,76,60,0); }
-      100% { box-shadow:0 0 0 0 rgba(231,76,60,0); }
-    }
-    .pulse { animation:pulse-ring 1.5s infinite; }
+        .controls label {
+            font-size: 11px;
+            color: var(--muted);
+        }
 
-    /* TOAST */
-    .toast {
-      position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
-      background:var(--card); border:1px solid var(--border);
-      border-radius:10px; padding:10px 20px; font-size:13px;
-      color:var(--text); box-shadow:0 8px 24px rgba(0,0,0,0.5);
-      z-index:999; transition:transform 0.3s ease; white-space:nowrap;
-    }
-    .toast.show { transform:translateX(-50%) translateY(0); }
-  </style>
+        .controls input[type=range] {
+            accent-color: var(--gold);
+            flex: 1;
+            min-width: 80px;
+            max-width: 140px;
+        }
+
+        .controls strong {
+            font-size: 12px;
+            color: var(--gold2);
+            min-width: 42px;
+        }
+
+        /* Légende statuts */
+        .legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 10px 16px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── CARTE SVG ──────────────────────────────────── */
+        .map-section {
+            margin: 14px 14px 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .map-header {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        svg#map {
+            display: block;
+            width: 100%;
+            height: 260px;
+            background: #12180f;
+        }
+
+        /* ── GROUPES PAR STATUT ─────────────────────────── */
+        .orders-wrap {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .group-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .group-title .gdot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .group-title .gcount {
+            margin-left: auto;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--bg3);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        /* Cartes commande */
+        .order-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .order-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .order-card:hover {
+            border-color: var(--gold);
+            transform: translateX(2px);
+        }
+
+        .order-card:active {
+            transform: scale(0.98);
+        }
+
+        .order-card .status-bar {
+            width: 3px;
+            border-radius: 4px;
+            align-self: stretch;
+            flex-shrink: 0;
+        }
+
+        .order-card .info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .order-card .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cream);
+        }
+
+        .order-card .detail {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .order-card .right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .order-card .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            color: var(--gold2);
+        }
+
+        .order-card .time {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* Commandes sans GPS (attente adresse) */
+        .no-gps-badge {
+            display: inline-block;
+            padding: 1px 7px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--s-attente);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            margin-left: 6px;
+        }
+
+        /* Cluster cards */
+        .cluster-group {
+            margin-bottom: 14px;
+        }
+
+        .cluster-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .cluster-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .cluster-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cluster-total {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ── ONGLET LIVRÉES ─────────────────────────────── */
+        .livrees-content {
+            padding: 14px;
+        }
+
+        .table-scroll {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        thead {
+            background: var(--bg3);
+        }
+
+        thead th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--bg3);
+        }
+
+        tbody td {
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        tbody td:first-child {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .tag-ok {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--s-delivered);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .livrees-total {
+            text-align: right;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold2);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* ── MODAL ──────────────────────────────────────── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-width: 520px;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s cubic-bezier(.2, .8, .3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%)
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            border-radius: 4px;
+            background: var(--border);
+            margin: 12px auto 0;
+        }
+
+        .modal-header {
+            padding: 14px 18px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .modal-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: var(--cream);
+        }
+
+        .modal-meta {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 4px;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+        }
+
+        .modal-address {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn-nav {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.85;
+        }
+
+        .btn-gmaps {
+            background: #4285F4;
+            color: #fff;
+        }
+
+        .btn-waze {
+            background: #33CCFF;
+            color: #1a1a1a;
+        }
+
+        .btn-plans {
+            background: #FF6B35;
+            color: #fff;
+        }
+
+        .statut-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .statut-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-statut {
+            padding: 11px 8px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg3);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text2);
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-statut:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-statut.active-statut {
+            border-color: var(--gold);
+            background: rgba(200, 150, 90, 0.12);
+            color: var(--gold2);
+        }
+
+        .btn-livrer {
+            grid-column: 1/-1;
+            margin-top: 2px;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #27ae60, #1a7a42);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 4px 14px rgba(39, 174, 96, 0.3);
+            transition: opacity 0.2s;
+        }
+
+        .btn-livrer:hover {
+            opacity: 0.9;
+        }
+
+        .btn-fermer {
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text2);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-fermer:hover {
+            color: var(--text);
+        }
+
+        /* pulse animation for imminent */
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        .pulse {
+            animation: pulse-ring 1.5s infinite;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 13px;
+            color: var(--text);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+    </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-top">
-    <div class="header-brand">
-      <span class="logo">🍝</span>
-      <div>
-        <h1>Lasagna Mia</h1>
-        <p>Tableau de bord livraisons</p>
-      </div>
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+            <div class="header-brand">
+                <span class="logo">🍝</span>
+                <div>
+                    <h1>Lasagna Mia</h1>
+                    <p>Tableau de bord livraisons</p>
+                </div>
+            </div>
+            <button class="btn-refresh" onclick="loadOrders(true)" id="refresh-btn">
+                <span class="icon">🔄</span> Actualiser
+            </button>
+        </div>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="val" id="s-attente">–</div>
+                <div class="lbl">Attente</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="s-encours">–</div>
+                <div class="lbl">En cours</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="s-livrees">–</div>
+                <div class="lbl">Livrées</div>
+            </div>
+            <div class="stat">
+                <div class="val" id="s-ca">–</div>
+                <div class="lbl">CA (F)</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('en-cours', this)">🚴 En cours</button>
+        <button class="tab" onclick="switchTab('livrees', this)">✅ Livrées</button>
     </div>
-    <button class="btn-refresh" onclick="loadOrders(true)" id="refresh-btn">
-      <span class="icon">🔄</span> Actualiser
-    </button>
-  </div>
-  <div class="stats-row">
-    <div class="stat"><div class="val" id="s-attente">–</div><div class="lbl">Attente</div></div>
-    <div class="stat"><div class="val" id="s-encours">–</div><div class="lbl">En cours</div></div>
-    <div class="stat"><div class="val" id="s-livrees">–</div><div class="lbl">Livrées</div></div>
-    <div class="stat"><div class="val" id="s-ca">–</div><div class="lbl">CA (F)</div></div>
-  </div>
-</header>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('en-cours', this)">🚴 En cours</button>
-  <button class="tab" onclick="switchTab('livrees', this)">✅ Livrées</button>
-</div>
+    <!-- ── TAB EN COURS ──────────────────────────────────── -->
+    <div class="en-cours" id="tab-en-cours">
 
-<!-- ── TAB EN COURS ──────────────────────────────────── -->
-<div class="en-cours" id="tab-en-cours">
+        <div class="controls">
+            <label>Rayon tournée :</label>
+            <input type="range" min="0.3" max="3" step="0.1" value="1" oninput="maxKm=parseFloat(this.value);document.getElementById('km-val').textContent=this.value+' km';renderMap()" />
+            <strong id="km-val">1 km</strong>
+        </div>
 
-  <div class="controls">
-    <label>Rayon tournée :</label>
-    <input type="range" min="0.3" max="3" step="0.1" value="1"
-      oninput="maxKm=parseFloat(this.value);document.getElementById('km-val').textContent=this.value+' km';renderMap()"/>
-    <strong id="km-val">1 km</strong>
-  </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--s-attente)"></div>Attente adresse
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--s-prep)"></div>Préparation
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--s-route)"></div>En route
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--s-imminent)"></div>Imminente
+            </div>
+        </div>
 
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--s-attente)"></div>Attente adresse</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--s-prep)"></div>Préparation</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--s-route)"></div>En route</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--s-imminent)"></div>Imminente</div>
-  </div>
+        <!-- CARTE -->
+        <div class="map-section">
+            <div class="map-header">
+                <span>📍 Vue des livraisons</span>
+                <span style="font-size:10px">Cliquez sur un point</span>
+            </div>
+            <svg id="map"></svg>
+        </div>
 
-  <!-- CARTE -->
-  <div class="map-section">
-    <div class="map-header">
-      <span>📍 Vue des livraisons</span>
-      <span style="font-size:10px">Cliquez sur un point</span>
+        <!-- COMMANDES groupées par statut -->
+        <div class="orders-wrap" id="orders-wrap"></div>
+
     </div>
-    <svg id="map"></svg>
-  </div>
 
-  <!-- COMMANDES groupées par statut -->
-  <div class="orders-wrap" id="orders-wrap"></div>
-
-</div>
-
-<!-- ── TAB LIVRÉES ───────────────────────────────────── -->
-<div class="livrees" id="tab-livrees">
-  <div class="livrees-content">
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th>#</th><th>Client</th><th>Commande</th><th>Adresse</th><th>Total</th><th>Heure</th></tr>
-        </thead>
-        <tbody id="livrees-tbody">
-          <tr><td colspan="6" class="empty">Chargement...</td></tr>
-        </tbody>
-      </table>
+    <!-- ── TAB LIVRÉES ───────────────────────────────────── -->
+    <div class="livrees" id="tab-livrees">
+        <div class="livrees-content">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Client</th>
+                            <th>Commande</th>
+                            <th>Adresse</th>
+                            <th>Total</th>
+                            <th>Heure</th>
+                        </tr>
+                    </thead>
+                    <tbody id="livrees-tbody">
+                        <tr>
+                            <td colspan="6" class="empty">Chargement...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="livrees-total" id="livrees-total"></div>
+        </div>
     </div>
-    <div class="livrees-total" id="livrees-total"></div>
-  </div>
-</div>
 
-<!-- ── MODAL ─────────────────────────────────────────── -->
-<div class="overlay" id="overlay" onclick="maybeClose(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div>
-        <div class="modal-name" id="m-name"></div>
-        <div class="modal-meta" id="m-meta"></div>
-      </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+    <!-- ── MODAL ─────────────────────────────────────────── -->
+    <div class="overlay" id="overlay" onclick="maybeClose(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <div>
+                    <div class="modal-name" id="m-name"></div>
+                    <div class="modal-meta" id="m-meta"></div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-address" id="m-address"></div>
+                <div class="nav-btns" id="m-nav"></div>
+                <div class="statut-section-title">Mettre à jour le statut</div>
+                <div class="statut-grid">
+                    <button class="btn-statut" id="btn-preparation" onclick="setStatut('preparation')">👨‍🍳 Préparation</button>
+                    <button class="btn-statut" id="btn-en_livraison" onclick="setStatut('en_livraison')">🚴 En route</button>
+                    <button class="btn-statut" id="btn-imminent" onclick="setStatut('imminent')">📍 Imminent</button>
+                    <button class="btn-livrer" onclick="setStatut('delivered')">✅ Marquer comme livré</button>
+                </div>
+                <button class="btn-fermer" onclick="closeModal()">Fermer</button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body">
-      <div class="modal-address" id="m-address"></div>
-      <div class="nav-btns" id="m-nav"></div>
-      <div class="statut-section-title">Mettre à jour le statut</div>
-      <div class="statut-grid">
-        <button class="btn-statut" id="btn-preparation"  onclick="setStatut('preparation')">👨‍🍳 Préparation</button>
-        <button class="btn-statut" id="btn-en_livraison" onclick="setStatut('en_livraison')">🚴 En route</button>
-        <button class="btn-statut" id="btn-imminent"     onclick="setStatut('imminent')">📍 Imminent</button>
-        <button class="btn-livrer"                       onclick="setStatut('delivered')">✅ Marquer comme livré</button>
-      </div>
-      <button class="btn-fermer" onclick="closeModal()">Fermer</button>
-    </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<script>
-  const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
-  const SUPABASE_KEY = 'VOTRE_SUPABASE_KEY';
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+        const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
+        const {
+            createClient
+        } = supabase;
+        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── CONFIG ───────────────────────────────────────────
-  const STATUTS_ENCOURS = ['awaiting_location','pending','preparation','en_livraison','imminent'];
+        // ── CONFIG ───────────────────────────────────────────
+        const STATUTS_ENCOURS = ['awaiting_location', 'pending', 'preparation', 'en_livraison', 'imminent'];
 
-  const STATUT_CFG = {
-    awaiting_location: { label:'Attente adresse', color:'var(--s-attente)',  emoji:'⏳' },
-    pending:           { label:'Attente adresse', color:'var(--s-attente)',  emoji:'⏳' },
-    preparation:       { label:'En préparation',  color:'var(--s-prep)',     emoji:'👨‍🍳' },
-    en_livraison:      { label:'En route',         color:'var(--s-route)',    emoji:'🚴' },
-    imminent:          { label:'Très proche',      color:'var(--s-imminent)', emoji:'📍' },
-    delivered:         { label:'Livré',             color:'var(--s-delivered)',emoji:'✅' },
-  };
+        const STATUT_CFG = {
+            awaiting_location: {
+                label: 'Attente adresse',
+                color: 'var(--s-attente)',
+                emoji: '⏳'
+            },
+            pending: {
+                label: 'Attente adresse',
+                color: 'var(--s-attente)',
+                emoji: '⏳'
+            },
+            preparation: {
+                label: 'En préparation',
+                color: 'var(--s-prep)',
+                emoji: '👨‍🍳'
+            },
+            en_livraison: {
+                label: 'En route',
+                color: 'var(--s-route)',
+                emoji: '🚴'
+            },
+            imminent: {
+                label: 'Très proche',
+                color: 'var(--s-imminent)',
+                emoji: '📍'
+            },
+            delivered: {
+                label: 'Livré',
+                color: 'var(--s-delivered)',
+                emoji: '✅'
+            },
+        };
 
-  const GROUPES = [
-    { key:'imminent',          label:'📍 Très proche',         color:'var(--s-imminent)' },
-    { key:'en_livraison',      label:'🟠 En route',            color:'var(--s-route)' },
-    { key:'preparation',       label:'🔵 En préparation',      color:'var(--s-prep)' },
-    { key:'awaiting_location', label:'🟡 Attente adresse',     color:'var(--s-attente)', alsoKey:'pending' },
-  ];
+        const GROUPES = [{
+                key: 'imminent',
+                label: '📍 Très proche',
+                color: 'var(--s-imminent)'
+            },
+            {
+                key: 'en_livraison',
+                label: '🟠 En route',
+                color: 'var(--s-route)'
+            },
+            {
+                key: 'preparation',
+                label: '🔵 En préparation',
+                color: 'var(--s-prep)'
+            },
+            {
+                key: 'awaiting_location',
+                label: '🟡 Attente adresse',
+                color: 'var(--s-attente)',
+                alsoKey: 'pending'
+            },
+        ];
 
-  const COLORS_MAP = ['#e8b87a','#4ECDC4','#F7931E','#45B7D1','#DDA0DD','#96CEB4'];
+        const COLORS_MAP = ['#e8b87a', '#4ECDC4', '#F7931E', '#45B7D1', '#DDA0DD', '#96CEB4'];
 
-  // ── STATE ────────────────────────────────────────────
-  let allOrders = [];
-  let currentOrder = null;
-  let maxKm = 1;
-  let currentTab = 'en-cours';
+        // ── STATE ────────────────────────────────────────────
+        let allOrders = [];
+        let currentOrder = null;
+        let maxKm = 1;
+        let currentTab = 'en-cours';
 
-  // ── CHARGEMENT ───────────────────────────────────────
-  async function loadOrders(showSpin = false) {
-    if (showSpin) {
-      const btn = document.getElementById('refresh-btn');
-      btn.classList.add('spin');
-      setTimeout(() => btn.classList.remove('spin'), 1000);
-    }
-    const { data, error } = await db.from('commandes').select('*').order('id', { ascending: false });
-    if (error) { console.error(error); return; }
-    allOrders = data || [];
-    render();
-    if (currentTab === 'livrees') renderLivrees();
-  }
+        // ── CHARGEMENT ───────────────────────────────────────
+        async function loadOrders(showSpin = false) {
+            if (showSpin) {
+                const btn = document.getElementById('refresh-btn');
+                btn.classList.add('spin');
+                setTimeout(() => btn.classList.remove('spin'), 1000);
+            }
+            const {
+                data,
+                error
+            } = await db.from('commandes').select('*').order('id', {
+                ascending: false
+            });
+            if (error) {
+                console.error(error);
+                return;
+            }
+            allOrders = data || [];
+            render();
+            if (currentTab === 'livrees') renderLivrees();
+        }
 
-  // ── TABS ─────────────────────────────────────────────
-  function switchTab(tab, btn) {
-    currentTab = tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-en-cours').style.display = tab === 'en-cours' ? 'block' : 'none';
-    document.getElementById('tab-livrees').style.display  = tab === 'livrees'  ? 'block' : 'none';
-    if (tab === 'livrees') renderLivrees();
-  }
+        // ── TABS ─────────────────────────────────────────────
+        function switchTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-en-cours').style.display = tab === 'en-cours' ? 'block' : 'none';
+            document.getElementById('tab-livrees').style.display = tab === 'livrees' ? 'block' : 'none';
+            if (tab === 'livrees') renderLivrees();
+        }
 
-  // ── RENDER PRINCIPAL ─────────────────────────────────
-  function render() {
-    renderStats();
-    renderMap();
-    renderGroups();
-  }
+        // ── RENDER PRINCIPAL ─────────────────────────────────
+        function render() {
+            renderStats();
+            renderMap();
+            renderGroups();
+        }
 
-  // ── STATS ────────────────────────────────────────────
-  function renderStats() {
-    const encours  = allOrders.filter(o => STATUTS_ENCOURS.includes(o.statut) && o.statut !== 'awaiting_location' && o.statut !== 'pending');
-    const attente  = allOrders.filter(o => o.statut === 'awaiting_location' || o.statut === 'pending');
-    const livrees  = allOrders.filter(o => o.statut === 'delivered');
-    const ca       = livrees.reduce((s, o) => s + (o.total || 0), 0);
+        // ── STATS ────────────────────────────────────────────
+        function renderStats() {
+            const encours = allOrders.filter(o => STATUTS_ENCOURS.includes(o.statut) && o.statut !== 'awaiting_location' && o.statut !== 'pending');
+            const attente = allOrders.filter(o => o.statut === 'awaiting_location' || o.statut === 'pending');
+            const livrees = allOrders.filter(o => o.statut === 'delivered');
+            const ca = livrees.reduce((s, o) => s + (o.total || 0), 0);
 
-    document.getElementById('s-attente').textContent = attente.length;
-    document.getElementById('s-encours').textContent = encours.length;
-    document.getElementById('s-livrees').textContent = livrees.length;
-    document.getElementById('s-ca').textContent      = ca >= 1000 ? (ca/1000).toFixed(1)+'k' : ca;
-  }
+            document.getElementById('s-attente').textContent = attente.length;
+            document.getElementById('s-encours').textContent = encours.length;
+            document.getElementById('s-livrees').textContent = livrees.length;
+            document.getElementById('s-ca').textContent = ca >= 1000 ? (ca / 1000).toFixed(1) + 'k' : ca;
+        }
 
-  // ── CARTE SVG ────────────────────────────────────────
-  function renderMap() {
-    const svg = document.getElementById('map');
-    svg.innerHTML = '';
-    const W = svg.clientWidth || 360;
-    const H = 260;
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        // ── CARTE SVG ────────────────────────────────────────
+        function renderMap() {
+            const svg = document.getElementById('map');
+            svg.innerHTML = '';
+            const W = svg.clientWidth || 360;
+            const H = 260;
+            svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-    // Uniquement les commandes avec GPS (hors awaiting_location sans coords)
-    const avecGps = allOrders.filter(o =>
-      o.latitude && o.longitude && o.statut !== 'delivered'
-    );
+            // Uniquement les commandes avec GPS (hors awaiting_location sans coords)
+            const avecGps = allOrders.filter(o =>
+                o.latitude && o.longitude && o.statut !== 'delivered'
+            );
 
-    if (!avecGps.length) {
-      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      t.setAttribute('x', W/2); t.setAttribute('y', H/2);
-      t.setAttribute('text-anchor', 'middle'); t.setAttribute('fill', '#5a4030');
-      t.setAttribute('font-size', '12'); t.setAttribute('font-family', 'DM Sans, sans-serif');
-      t.textContent = 'Aucune position GPS disponible';
-      svg.appendChild(t); return;
-    }
+            if (!avecGps.length) {
+                const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                t.setAttribute('x', W / 2);
+                t.setAttribute('y', H / 2);
+                t.setAttribute('text-anchor', 'middle');
+                t.setAttribute('fill', '#5a4030');
+                t.setAttribute('font-size', '12');
+                t.setAttribute('font-family', 'DM Sans, sans-serif');
+                t.textContent = 'Aucune position GPS disponible';
+                svg.appendChild(t);
+                return;
+            }
 
-    const pad = 28;
-    const bounds = {
-      minLat: Math.min(...avecGps.map(o => o.latitude))  - 0.003,
-      maxLat: Math.max(...avecGps.map(o => o.latitude))  + 0.003,
-      minLng: Math.min(...avecGps.map(o => o.longitude)) - 0.005,
-      maxLng: Math.max(...avecGps.map(o => o.longitude)) + 0.005,
-    };
+            const pad = 28;
+            const bounds = {
+                minLat: Math.min(...avecGps.map(o => o.latitude)) - 0.003,
+                maxLat: Math.max(...avecGps.map(o => o.latitude)) + 0.003,
+                minLng: Math.min(...avecGps.map(o => o.longitude)) - 0.005,
+                maxLng: Math.max(...avecGps.map(o => o.longitude)) + 0.005,
+            };
 
-    const toPixel = (lat, lng) => ({
-      x: pad + ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * (W - pad*2),
-      y: H - pad - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (H - pad*2),
-    });
+            const toPixel = (lat, lng) => ({
+                x: pad + ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * (W - pad * 2),
+                y: H - pad - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (H - pad * 2),
+            });
 
-    const el = (tag, attrs, parent) => {
-      const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      for (const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
-      if (parent) parent.appendChild(e);
-      return e;
-    };
+            const el = (tag, attrs, parent) => {
+                const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+                if (parent) parent.appendChild(e);
+                return e;
+            };
 
-    // Grille
-    [0.25, 0.5, 0.75].forEach(f => {
-      el('line', { x1:0, y1:H*f, x2:W, y2:H*f, stroke:'#1e1510', 'stroke-width':'0.5' }, svg);
-      el('line', { x1:W*f, y1:0, x2:W*f, y2:H, stroke:'#1e1510', 'stroke-width':'0.5' }, svg);
-    });
+            // Grille
+            [0.25, 0.5, 0.75].forEach(f => {
+                el('line', {
+                    x1: 0,
+                    y1: H * f,
+                    x2: W,
+                    y2: H * f,
+                    stroke: '#1e1510',
+                    'stroke-width': '0.5'
+                }, svg);
+                el('line', {
+                    x1: W * f,
+                    y1: 0,
+                    x2: W * f,
+                    y2: H,
+                    stroke: '#1e1510',
+                    'stroke-width': '0.5'
+                }, svg);
+            });
 
-    // Clustering pour les lignes
-    const clusters = buildClusters(avecGps);
-    clusters.forEach((c, ci) => {
-      if (c.length < 2) return;
-      const color = COLORS_MAP[ci % COLORS_MAP.length];
-      const pts = c.map(o => toPixel(o.latitude, o.longitude));
-      for (let i = 0; i < pts.length - 1; i++) {
-        el('line', {
-          x1:pts[i].x, y1:pts[i].y, x2:pts[i+1].x, y2:pts[i+1].y,
-          stroke:color, 'stroke-width':'1.5', 'stroke-dasharray':'5,3', opacity:'0.5'
-        }, svg);
-      }
-    });
+            // Clustering pour les lignes
+            const clusters = buildClusters(avecGps);
+            clusters.forEach((c, ci) => {
+                if (c.length < 2) return;
+                const color = COLORS_MAP[ci % COLORS_MAP.length];
+                const pts = c.map(o => toPixel(o.latitude, o.longitude));
+                for (let i = 0; i < pts.length - 1; i++) {
+                    el('line', {
+                        x1: pts[i].x,
+                        y1: pts[i].y,
+                        x2: pts[i + 1].x,
+                        y2: pts[i + 1].y,
+                        stroke: color,
+                        'stroke-width': '1.5',
+                        'stroke-dasharray': '5,3',
+                        opacity: '0.5'
+                    }, svg);
+                }
+            });
 
-    // Points
-    avecGps.forEach(o => {
-      const p = toPixel(o.latitude, o.longitude);
-      const cfg = STATUT_CFG[o.statut] || {};
-      const color = cfg.color || 'var(--muted)';
-      const isImm = o.statut === 'imminent';
+            // Points
+            avecGps.forEach(o => {
+                const p = toPixel(o.latitude, o.longitude);
+                const cfg = STATUT_CFG[o.statut] || {};
+                const color = cfg.color || 'var(--muted)';
+                const isImm = o.statut === 'imminent';
 
-      const g = el('g', { style:'cursor:pointer', transform:`translate(${p.x},${p.y})` }, svg);
-      g.addEventListener('click', () => openModal(o));
+                const g = el('g', {
+                    style: 'cursor:pointer',
+                    transform: `translate(${p.x},${p.y})`
+                }, svg);
+                g.addEventListener('click', () => openModal(o));
 
-      if (isImm) el('circle', { cx:0, cy:0, r:14, fill:'rgba(231,76,60,0.2)', class:'pulse' }, g);
-      el('circle', { cx:0, cy:0, r:9, fill:color, stroke:'#0f0b08', 'stroke-width':'2' }, g);
-      const t = el('text', { x:0, y:4, 'text-anchor':'middle', 'font-size':8, fill:'#fff', 'font-weight':'bold', 'font-family':'DM Sans,sans-serif' }, g);
-      t.textContent = o.id;
-    });
+                if (isImm) el('circle', {
+                    cx: 0,
+                    cy: 0,
+                    r: 14,
+                    fill: 'rgba(231,76,60,0.2)',
+                    class: 'pulse'
+                }, g);
+                el('circle', {
+                    cx: 0,
+                    cy: 0,
+                    r: 9,
+                    fill: color,
+                    stroke: '#0f0b08',
+                    'stroke-width': '2'
+                }, g);
+                const t = el('text', {
+                    x: 0,
+                    y: 4,
+                    'text-anchor': 'middle',
+                    'font-size': 8,
+                    fill: '#fff',
+                    'font-weight': 'bold',
+                    'font-family': 'DM Sans,sans-serif'
+                }, g);
+                t.textContent = o.id;
+            });
 
-    // Labels tournées
-    clusters.forEach((c, ci) => {
-      if (c.length < 2) return;
-      const color = COLORS_MAP[ci % COLORS_MAP.length];
-      const cx = c.reduce((s, o) => s + toPixel(o.latitude, o.longitude).x, 0) / c.length;
-      const cy = c.reduce((s, o) => s + toPixel(o.latitude, o.longitude).y, 0) / c.length - 18;
-      const t = el('text', { x:cx, y:cy, 'text-anchor':'middle', 'font-size':9, fill:color, 'font-weight':'700', 'font-family':'DM Sans,sans-serif' }, svg);
-      t.textContent = `T${ci+1} (${c.length})`;
-    });
-  }
+            // Labels tournées
+            clusters.forEach((c, ci) => {
+                if (c.length < 2) return;
+                const color = COLORS_MAP[ci % COLORS_MAP.length];
+                const cx = c.reduce((s, o) => s + toPixel(o.latitude, o.longitude).x, 0) / c.length;
+                const cy = c.reduce((s, o) => s + toPixel(o.latitude, o.longitude).y, 0) / c.length - 18;
+                const t = el('text', {
+                    x: cx,
+                    y: cy,
+                    'text-anchor': 'middle',
+                    'font-size': 9,
+                    fill: color,
+                    'font-weight': '700',
+                    'font-family': 'DM Sans,sans-serif'
+                }, svg);
+                t.textContent = `T${ci+1} (${c.length})`;
+            });
+        }
 
-  // Clustering simple par rayon
-  function buildClusters(orders) {
-    const visited = new Set(), clusters = [];
-    for (const o of orders) {
-      if (visited.has(o.id)) continue;
-      const c = [o]; visited.add(o.id);
-      for (const other of orders) {
-        if (visited.has(other.id)) continue;
-        const dx = (o.latitude - other.latitude) * 111;
-        const dy = (o.longitude - other.longitude) * 85;
-        if (Math.sqrt(dx*dx + dy*dy) < maxKm) { c.push(other); visited.add(other.id); }
-      }
-      clusters.push(c);
-    }
-    return clusters;
-  }
+        // Clustering simple par rayon
+        function buildClusters(orders) {
+            const visited = new Set(),
+                clusters = [];
+            for (const o of orders) {
+                if (visited.has(o.id)) continue;
+                const c = [o];
+                visited.add(o.id);
+                for (const other of orders) {
+                    if (visited.has(other.id)) continue;
+                    const dx = (o.latitude - other.latitude) * 111;
+                    const dy = (o.longitude - other.longitude) * 85;
+                    if (Math.sqrt(dx * dx + dy * dy) < maxKm) {
+                        c.push(other);
+                        visited.add(other.id);
+                    }
+                }
+                clusters.push(c);
+            }
+            return clusters;
+        }
 
-  // ── GROUPES PAR STATUT ───────────────────────────────
-  function renderGroups() {
-    const wrap = document.getElementById('orders-wrap');
-    const encours = allOrders.filter(o => STATUTS_ENCOURS.includes(o.statut));
+        // ── GROUPES PAR STATUT ───────────────────────────────
+        function renderGroups() {
+            const wrap = document.getElementById('orders-wrap');
+            const encours = allOrders.filter(o => STATUTS_ENCOURS.includes(o.statut));
 
-    if (!encours.length) {
-      wrap.innerHTML = '<div class="empty" style="color:var(--muted)">🍝 Aucune commande en cours</div>';
-      return;
-    }
+            if (!encours.length) {
+                wrap.innerHTML = '<div class="empty" style="color:var(--muted)">🍝 Aucune commande en cours</div>';
+                return;
+            }
 
-    wrap.innerHTML = '';
+            wrap.innerHTML = '';
 
-    GROUPES.forEach(groupe => {
-      const orders = encours.filter(o =>
-        o.statut === groupe.key || (groupe.alsoKey && o.statut === groupe.alsoKey)
-      );
-      if (!orders.length) return;
+            GROUPES.forEach(groupe => {
+                const orders = encours.filter(o =>
+                    o.statut === groupe.key || (groupe.alsoKey && o.statut === groupe.alsoKey)
+                );
+                if (!orders.length) return;
 
-      const div = document.createElement('div');
-      div.innerHTML = `
+                const div = document.createElement('div');
+                div.innerHTML = `
         <div class="group-title">
           <div class="gdot" style="background:${groupe.color}"></div>
           <span style="color:${groupe.color}">${groupe.label}</span>
           <span class="gcount">${orders.length}</span>
         </div>`;
 
-      orders.forEach(o => {
-        const cfg = STATUT_CFG[o.statut] || {};
-        const hasGps = o.latitude && o.longitude;
-        const card = document.createElement('div');
-        card.className = 'order-card';
-        card.innerHTML = `
+                orders.forEach(o => {
+                    const cfg = STATUT_CFG[o.statut] || {};
+                    const hasGps = o.latitude && o.longitude;
+                    const card = document.createElement('div');
+                    card.className = 'order-card';
+                    card.innerHTML = `
           <div class="status-bar" style="background:${groupe.color}"></div>
           <div class="info">
             <div class="name">
@@ -627,66 +1241,79 @@
             <div class="price">${(o.total||0).toLocaleString('fr-FR')} F</div>
             <div class="time">${o.heure || ''}</div>
           </div>`;
-        card.addEventListener('click', () => openModal(o));
-        div.appendChild(card);
-      });
+                    card.addEventListener('click', () => openModal(o));
+                    div.appendChild(card);
+                });
 
-      wrap.appendChild(div);
-    });
-  }
+                wrap.appendChild(div);
+            });
+        }
 
-  // ── MODAL ────────────────────────────────────────────
-  function openModal(order) {
-    currentOrder = order;
-    document.getElementById('m-name').textContent = `#${order.id} — ${order.client || '–'}`;
-    document.getElementById('m-meta').innerHTML =
-      `📦 ${order.article || '–'}<br>` +
-      `⏰ ${order.heure || '–'} &nbsp;·&nbsp; 💰 ${(order.total||0).toLocaleString('fr-FR')} FCFA`;
+        // ── MODAL ────────────────────────────────────────────
+        function openModal(order) {
+            currentOrder = order;
+            document.getElementById('m-name').textContent = `#${order.id} — ${order.client || '–'}`;
+            document.getElementById('m-meta').innerHTML =
+                `📦 ${order.article || '–'}<br>` +
+                `⏰ ${order.heure || '–'} &nbsp;·&nbsp; 💰 ${(order.total||0).toLocaleString('fr-FR')} FCFA`;
 
-    const addr = order.adresse ||
-      (order.latitude ? `GPS : ${order.latitude.toFixed(5)}, ${order.longitude.toFixed(5)}` : 'Adresse non renseignée');
-    document.getElementById('m-address').textContent = '📍 ' + addr;
+            const addr = order.adresse ||
+                (order.latitude ? `GPS : ${order.latitude.toFixed(5)}, ${order.longitude.toFixed(5)}` : 'Adresse non renseignée');
+            document.getElementById('m-address').textContent = '📍 ' + addr;
 
-    // Nav buttons
-    const lat = order.latitude, lng = order.longitude;
-    const q = lat ? `${lat},${lng}` : encodeURIComponent(order.adresse || '');
-    document.getElementById('m-nav').innerHTML = lat || order.adresse ? `
+            // Nav buttons
+            const lat = order.latitude,
+                lng = order.longitude;
+            const q = lat ? `${lat},${lng}` : encodeURIComponent(order.adresse || '');
+            document.getElementById('m-nav').innerHTML = lat || order.adresse ? `
       <a href="https://www.google.com/maps/dir/?api=1&destination=${q}" target="_blank" class="btn-nav btn-gmaps">🗺️ Maps</a>
       <a href="${lat ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : `https://waze.com/ul?q=${encodeURIComponent(order.adresse||'')}&navigate=yes`}" target="_blank" class="btn-nav btn-waze">🚗 Waze</a>
       <a href="${lat ? `https://maps.apple.com/?daddr=${lat},${lng}` : `https://maps.apple.com/?daddr=${encodeURIComponent(order.adresse||'')}`}" target="_blank" class="btn-nav btn-plans">🍎 Plans</a>
     ` : '<p style="font-size:12px;color:var(--muted)">Navigation indisponible (pas de GPS)</p>';
 
-    // Statut actif
-    ['preparation','en_livraison','imminent'].forEach(s => {
-      document.getElementById(`btn-${s}`)?.classList.toggle('active-statut', order.statut === s);
-    });
+            // Statut actif
+            ['preparation', 'en_livraison', 'imminent'].forEach(s => {
+                document.getElementById(`btn-${s}`)?.classList.toggle('active-statut', order.statut === s);
+            });
 
-    document.getElementById('overlay').classList.add('open');
-  }
+            document.getElementById('overlay').classList.add('open');
+        }
 
-  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-  function maybeClose(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+        function closeModal() {
+            document.getElementById('overlay').classList.remove('open');
+        }
 
-  async function setStatut(statut) {
-    if (!currentOrder) return;
-    const { error } = await db.from('commandes').update({ statut }).eq('id', currentOrder.id);
-    if (error) { showToast('Erreur : ' + error.message); return; }
-    closeModal();
-    showToast(statut === 'delivered' ? '✅ Livraison confirmée !' : '🔄 Statut mis à jour');
-    await loadOrders();
-  }
+        function maybeClose(e) {
+            if (e.target === document.getElementById('overlay')) closeModal();
+        }
 
-  // ── LIVRÉES ──────────────────────────────────────────
-  function renderLivrees() {
-    const livrees = allOrders.filter(o => o.statut === 'delivered');
-    const tbody = document.getElementById('livrees-tbody');
-    if (!livrees.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="empty">Aucune livraison pour l\'instant</td></tr>';
-      document.getElementById('livrees-total').textContent = '';
-      return;
-    }
-    const total = livrees.reduce((s, o) => s + (o.total || 0), 0);
-    tbody.innerHTML = livrees.map(o => `
+        async function setStatut(statut) {
+            if (!currentOrder) return;
+            const {
+                error
+            } = await db.from('commandes').update({
+                statut
+            }).eq('id', currentOrder.id);
+            if (error) {
+                showToast('Erreur : ' + error.message);
+                return;
+            }
+            closeModal();
+            showToast(statut === 'delivered' ? '✅ Livraison confirmée !' : '🔄 Statut mis à jour');
+            await loadOrders();
+        }
+
+        // ── LIVRÉES ──────────────────────────────────────────
+        function renderLivrees() {
+            const livrees = allOrders.filter(o => o.statut === 'delivered');
+            const tbody = document.getElementById('livrees-tbody');
+            if (!livrees.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty">Aucune livraison pour l\'instant</td></tr>';
+                document.getElementById('livrees-total').textContent = '';
+                return;
+            }
+            const total = livrees.reduce((s, o) => s + (o.total || 0), 0);
+            tbody.innerHTML = livrees.map(o => `
       <tr>
         <td>#${o.id}</td>
         <td>${o.client || '–'}</td>
@@ -695,23 +1322,26 @@
         <td style="color:var(--gold2);font-weight:700">${(o.total||0).toLocaleString('fr-FR')} F</td>
         <td>${o.heure || '–'}</td>
       </tr>`).join('');
-    document.getElementById('livrees-total').textContent =
-      `Total encaissé : ${total.toLocaleString('fr-FR')} FCFA`;
-  }
+            document.getElementById('livrees-total').textContent =
+                `Total encaissé : ${total.toLocaleString('fr-FR')} FCFA`;
+        }
 
-  // ── TOAST ────────────────────────────────────────────
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+        // ── TOAST ────────────────────────────────────────────
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
-  // ── INIT ─────────────────────────────────────────────
-  // Initialiser l'affichage des tabs correctement
-  document.getElementById('tab-livrees').style.display = 'none';
+        // ── INIT ─────────────────────────────────────────────
+        // Initialiser l'affichage des tabs correctement
+        document.getElementById('tab-livrees').style.display = 'none';
 
-  loadOrders();
-  setInterval(() => loadOrders(), 30000);
-</script>
+        loadOrders();
+        setInterval(() => loadOrders(), 30000);
+
+    </script>
 </body>
+
 </html>
