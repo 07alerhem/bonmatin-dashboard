@@ -672,10 +672,10 @@
 
   // ── NAVIGATION ───────────────────────────────────────
   const SECTION_META = {
-    restaurant: { title: 'Restaurant',  sub: 'Informations générales',   action: '💾 Enregistrer' },
-    horaires:   { title: 'Horaires',    sub: 'Jours & créneaux',          action: '💾 Enregistrer' },
-    plats:      { title: 'Carte',       sub: 'Gestion des plats',         action: '＋ Nouveau plat' },
-    commandes:  { title: 'Commandes',   sub: 'Historique des commandes',  action: '🔄 Actualiser' },
+    restaurant: { title: 'Restaurant',  sub: 'Informations générales',  action: '💾 Enregistrer' },
+    horaires:   { title: 'Horaires',    sub: 'Jours & créneaux',         action: '💾 Enregistrer' },
+    plats:      { title: 'Carte',       sub: 'Gestion des plats',        action: '🔄 Actualiser le bot' },
+    commandes:  { title: 'Commandes',   sub: 'Historique des commandes', action: '🔄 Actualiser' },
   };
 
   function showSection(name, el) {
@@ -694,8 +694,25 @@
   function topbarAction() {
     if (currentSection === 'restaurant') saveRestaurant();
     else if (currentSection === 'horaires') saveHoraires();
-    else if (currentSection === 'plats') openPlatModal();
+    else if (currentSection === 'plats') refreshBot();
     else if (currentSection === 'commandes') loadCommandes();
+  }
+
+  const RAILWAY_URL = 'https://bonmatin-bot-production.up.railway.app'; // ex: https://lasagnamia-bot.up.railway.app
+
+  async function refreshBot() {
+    const btn = document.getElementById('topbar-action');
+    btn.innerHTML = '⏳ Actualisation...';
+    btn.disabled = true;
+    try {
+      const r = await fetch(`${RAILWAY_URL}/refresh`, { method: 'POST' });
+      const d = await r.json();
+      showToast(`Bot actualisé — ${d.plats} plats, ${d.config} clés config`);
+    } catch (err) {
+      showToast('Impossible de contacter le bot. Vérifiez RAILWAY_URL.', 'error');
+    }
+    btn.innerHTML = '🔄 Actualiser le bot';
+    btn.disabled = false;
   }
 
   // ── TOAST ─────────────────────────────────────────────
