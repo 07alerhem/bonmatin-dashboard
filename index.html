@@ -411,15 +411,15 @@
     pending:           { label:'Attente adresse', color:'var(--s-attente)',  emoji:'⏳' },
     preparation:       { label:'En préparation',  color:'var(--s-prep)',     emoji:'👨‍🍳' },
     en_livraison:      { label:'En route',         color:'var(--s-route)',    emoji:'🚴' },
-    imminent:          { label:'Imminente',         color:'var(--s-imminent)', emoji:'📍' },
+    imminent:          { label:'Très proche',      color:'var(--s-imminent)', emoji:'📍' },
     delivered:         { label:'Livré',             color:'var(--s-delivered)',emoji:'✅' },
   };
 
   const GROUPES = [
-    { key:'imminent',          label:'🔴 Livraison imminente', color:'var(--s-imminent)' },
+    { key:'imminent',          label:'📍 Très proche',         color:'var(--s-imminent)' },
     { key:'en_livraison',      label:'🟠 En route',            color:'var(--s-route)' },
     { key:'preparation',       label:'🔵 En préparation',      color:'var(--s-prep)' },
-    { key:'awaiting_location', label:'🟡 Attente adresse',     color:'var(--s-attente)',  alsoKey:'pending' },
+    { key:'awaiting_location', label:'🟡 Attente adresse',     color:'var(--s-attente)', alsoKey:'pending' },
   ];
 
   const COLORS_MAP = ['#e8b87a','#4ECDC4','#F7931E','#45B7D1','#DDA0DD','#96CEB4'];
