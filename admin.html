@@ -3,55 +3,50 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lasagna Mia — Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin — Lasagna Mia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-    --bg: #f7f4ef;
-    --bg2: #f1ece4;
-    --bg3: #e9e2d6;
-
-    --card: #ffffff;
-    --border: #e2d8c8;
-
-    --gold: #c49a6c;
-    --gold2: #e0b98a;
-
-    --cream: #faf6ef;
-    --muted: #9c8466;
-
-    --danger: #d35454;
-    --success: #3fae7a;
-
-    --text: #2d2a26;
-    --text2: #7a6a58;
-
-    --radius: 12px;
-    --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
+            --bg: #F7F5F2;
+            --surface: #FFFFFF;
+            --border: #E8E3DC;
+            --border2: #F0EBE3;
+            --primary: #1C1917;
+            --accent: #B5803A;
+            --accent2: #D4A55A;
+            --muted: #9C8E82;
+            --text: #2C2420;
+            --text2: #6B5E55;
+            --danger: #DC2626;
+            --success: #16A34A;
+            --warning: #D97706;
+            --info: #2563EB;
+            --radius: 10px;
+            --shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
 
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            font-size: 14px
         }
 
-        /* ── SIDEBAR ─────────────────────────────────────── */
+        /* SIDEBAR */
         .sidebar {
-            width: 240px;
+            width: 220px;
             min-height: 100vh;
-            flex-shrink: 0;
-            background: var(--bg2);
+            background: var(--surface);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -59,95 +54,94 @@
             top: 0;
             height: 100vh;
             overflow-y: auto;
+            flex-shrink: 0
         }
 
-        .sidebar-logo {
-            padding: 28px 20px 20px;
-            border-bottom: 1px solid var(--border);
+        .sb-brand {
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--border2)
         }
 
-        .sidebar-logo .icon {
-            font-size: 28px;
-            margin-bottom: 6px;
-        }
-
-        .sidebar-logo h1 {
+        .sb-name {
             font-family: 'Playfair Display', serif;
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--gold2);
-            letter-spacing: 0.3px;
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 600
         }
 
-        .sidebar-logo p {
+        .sb-sub {
             font-size: 10px;
             color: var(--muted);
             margin-top: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: .8px
         }
 
-        .sidebar-nav {
-            padding: 16px 10px;
-            flex: 1;
+        .sb-nav {
+            padding: 12px 8px;
+            flex: 1
         }
 
-        .nav-section-title {
+        .sb-section {
             font-size: 9px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 14px 10px 6px;
+            letter-spacing: 1.2px;
+            padding: 12px 8px 4px
         }
 
-        .nav-item {
+        .sb-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 8px;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 7px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
             color: var(--text2);
+            font-size: 13px;
             font-weight: 500;
-            margin-bottom: 2px;
-            border: 1px solid transparent;
+            transition: all .15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 1px
         }
 
-        .nav-item:hover {
-            background: var(--bg3);
-            color: var(--text);
+        .sb-item:hover {
+            background: var(--bg);
+            color: var(--text)
         }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, #2a1a08, #3a2510);
-            color: var(--gold2);
-            border-color: var(--border);
+        .sb-item.active {
+            background: #FEF3E2;
+            color: var(--accent);
+            font-weight: 600
         }
 
-        .nav-item .nav-icon {
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
+        .sb-item .ico {
+            font-size: 15px;
+            width: 18px;
+            text-align: center
         }
 
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border);
-            font-size: 11px;
+        .sb-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border2);
+            font-size: 10px;
             color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px
         }
 
-        .status-dot {
-            display: inline-block;
-            width: 7px;
-            height: 7px;
+        .online-dot {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: var(--success);
-            margin-right: 6px;
-            animation: blink 2s infinite;
+            animation: blink 2s infinite
         }
 
         @keyframes blink {
@@ -158,111 +152,148 @@
             }
 
             50% {
-                opacity: 0.3
+                opacity: .3
             }
         }
 
-        /* ── MAIN ────────────────────────────────────────── */
+        /* MAIN */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
+            overflow: hidden
         }
 
         .topbar {
-            padding: 20px 32px;
+            padding: 14px 24px;
             border-bottom: 1px solid var(--border);
+            background: var(--surface);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg2);
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 20
         }
 
-        .topbar-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            color: var(--text);
-        }
-
-        .topbar-sub {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 9px 18px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
+        .topbar-left h2 {
+            font-size: 17px;
             font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.2s;
+            color: var(--primary)
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gold), #a06830);
-            color: #1a0f00;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(200, 150, 90, 0.3);
-        }
-
-        .btn-ghost {
-            background: var(--bg3);
-            color: var(--text2);
-            border: 1px solid var(--border);
-        }
-
-        .btn-ghost:hover {
-            color: var(--text);
-            border-color: var(--gold);
-        }
-
-        .btn-danger {
-            background: rgba(192, 57, 43, 0.15);
-            color: #e74c3c;
-            border: 1px solid rgba(192, 57, 43, 0.3);
-        }
-
-        .btn-danger:hover {
-            background: rgba(192, 57, 43, 0.25);
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
+        .topbar-left p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 1px
         }
 
         .content {
-            padding: 32px;
+            padding: 24px;
             flex: 1;
+            overflow-y: auto
         }
 
-        /* ── SECTIONS ────────────────────────────────────── */
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all .15s;
+            text-decoration: none
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: #2D2420
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn-accent:hover {
+            opacity: .9
+        }
+
+        .btn-ghost {
+            background: var(--surface);
+            color: var(--text2);
+            border: 1px solid var(--border)
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .btn-danger {
+            background: #FEF2F2;
+            color: var(--danger);
+            border: 1px solid #FECACA
+        }
+
+        .btn-danger:hover {
+            background: #FEE2E2
+        }
+
+        .btn-success {
+            background: #F0FDF4;
+            color: var(--success);
+            border: 1px solid #BBF7D0
+        }
+
+        .btn-success:hover {
+            background: #DCFCE7
+        }
+
+        .btn-warning {
+            background: #FFFBEB;
+            color: var(--warning);
+            border: 1px solid #FDE68A
+        }
+
+        .btn-warning:hover {
+            background: #FEF3C7
+        }
+
+        .btn-sm {
+            padding: 5px 11px;
+            font-size: 12px
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
+        /* SECTIONS */
         .section {
             display: none;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn .25s ease
         }
 
         .section.active {
-            display: block;
+            display: block
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(8px)
+                transform: translateY(6px)
             }
 
             to {
@@ -271,49 +302,41 @@
             }
         }
 
-        /* ── CARDS ───────────────────────────────────────── */
+        /* CARDS */
         .card {
-            background: var(--card);
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow)
         }
 
         .card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 15px;
-            color: var(--gold2);
-            margin-bottom: 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .card-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(to right, var(--border), transparent);
-            margin-left: 10px;
+            gap: 6px
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 14px
         }
 
         .grid-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
+            gap: 14px
         }
 
-        /* ── FORM FIELDS ─────────────────────────────────── */
+        /* FIELDS */
         .field {
-            margin-bottom: 16px;
+            margin-bottom: 14px
         }
 
         .field label {
@@ -321,281 +344,381 @@
             font-size: 11px;
             font-weight: 600;
             color: var(--muted);
+            margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
+            letter-spacing: .5px
         }
 
         .field input,
         .field textarea,
         .field select {
             width: 100%;
-            padding: 10px 14px;
-            background: var(--bg3);
+            padding: 9px 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
             color: var(--text);
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
+            background: var(--surface);
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color .15s
         }
 
         .field input:focus,
         .field textarea:focus,
         .field select:focus {
-            border-color: var(--gold);
+            border-color: var(--accent)
         }
 
         .field textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 72px
         }
 
         .field select option {
-            background: var(--bg3);
+            background: var(--surface)
         }
 
-        /* ── JOURS D'OUVERTURE ───────────────────────────── */
-        .days-grid {
+        .field-row {
             display: flex;
             gap: 8px;
+            align-items: flex-end
+        }
+
+        .field-row .field {
+            flex: 1;
+            margin-bottom: 0
+        }
+
+        /* DAYS */
+        .days-grid {
+            display: flex;
+            gap: 6px;
             flex-wrap: wrap;
+            margin-top: 4px
         }
 
-        .day-toggle {
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
+        .day-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
             border: 1px solid var(--border);
-            background: var(--bg3);
-            font-size: 13px;
+            background: var(--bg);
+            font-size: 12px;
             color: var(--text2);
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: all .15s;
             user-select: none;
+            font-family: 'Inter', sans-serif
         }
 
-        .day-toggle.selected {
-            background: linear-gradient(135deg, #2a1a08, #3a2510);
-            border-color: var(--gold);
-            color: var(--gold2);
-            font-weight: 600;
+        .day-btn.on {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            font-weight: 600
         }
 
-        /* ── TOGGLE SWITCH ───────────────────────────────── */
+        /* TOGGLE */
         .toggle-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border2)
         }
 
         .toggle-row:last-child {
-            border-bottom: none;
+            border-bottom: none
         }
 
-        .toggle-label {
+        .tl {
             font-size: 13px;
             color: var(--text);
+            font-weight: 500
         }
 
-        .toggle-desc {
+        .td {
             font-size: 11px;
             color: var(--muted);
-            margin-top: 2px;
+            margin-top: 1px
         }
 
         .switch {
             position: relative;
-            width: 44px;
-            height: 24px;
-            flex-shrink: 0;
+            width: 38px;
+            height: 22px;
+            flex-shrink: 0
         }
 
         .switch input {
             opacity: 0;
             width: 0;
-            height: 0;
+            height: 0
         }
 
-        .slider {
+        .sw-slider {
             position: absolute;
             inset: 0;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+            background: var(--border);
+            border-radius: 22px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: .25s
         }
 
-        .slider::before {
+        .sw-slider::before {
             content: '';
             position: absolute;
-            width: 18px;
-            height: 18px;
-            left: 2px;
-            top: 2px;
+            width: 16px;
+            height: 16px;
+            left: 3px;
+            top: 3px;
             border-radius: 50%;
-            background: var(--muted);
-            transition: 0.3s;
+            background: #fff;
+            transition: .25s
         }
 
-        .switch input:checked+.slider {
-            background: var(--gold);
-            border-color: var(--gold);
+        .switch input:checked+.sw-slider {
+            background: var(--accent)
         }
 
-        .switch input:checked+.slider::before {
-            transform: translateX(20px);
-            background: #1a0f00;
+        .switch input:checked+.sw-slider::before {
+            transform: translateX(16px)
         }
 
-        /* ── HORAIRES ────────────────────────────────────── */
-        .time-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .time-row:last-child {
-            border-bottom: none;
-        }
-
-        .time-label {
-            font-size: 13px;
-            color: var(--text);
-            flex: 1;
-        }
-
-        .time-input {
-            padding: 7px 10px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            width: 100px;
-            transition: border-color 0.2s;
-        }
-
-        .time-input:focus {
-            border-color: var(--gold);
-        }
-
-        /* ── TABLE PLATS ─────────────────────────────────── */
+        /* TABLE */
         .table-wrap {
             border-radius: var(--radius);
             overflow: hidden;
             border: 1px solid var(--border);
+            overflow-x: auto
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: collapse
         }
 
         thead {
-            background: var(--bg3);
+            background: var(--bg)
         }
 
         thead th {
-            padding: 12px 16px;
+            padding: 10px 14px;
             text-align: left;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: .8px;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border)
         }
 
         tbody tr {
-            border-bottom: 1px solid var(--border);
-            transition: background 0.15s;
+            border-bottom: 1px solid var(--border2);
+            transition: background .1s
         }
 
         tbody tr:last-child {
-            border-bottom: none;
+            border-bottom: none
         }
 
         tbody tr:hover {
-            background: var(--bg3);
+            background: #FDFAF7
         }
 
         tbody td {
-            padding: 12px 16px;
+            padding: 10px 14px;
             font-size: 13px;
-            color: var(--text2);
+            color: var(--text2)
         }
 
         tbody td:first-child {
             color: var(--text);
-            font-weight: 500;
+            font-weight: 500
         }
 
-        .tag {
-            display: inline-block;
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
             padding: 2px 8px;
             border-radius: 20px;
             font-size: 10px;
             font-weight: 600;
-            margin-right: 4px;
+            white-space: nowrap
         }
 
-        .tag-cat {
-            background: rgba(200, 150, 90, 0.15);
-            color: var(--gold);
-            border: 1px solid rgba(200, 150, 90, 0.2);
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E
         }
 
-        .tag-format {
-            background: var(--bg3);
-            color: var(--text2);
+        .badge-ok {
+            background: #D1FAE5;
+            color: #065F46
+        }
+
+        .badge-error {
+            background: #FEE2E2;
+            color: #991B1B
+        }
+
+        .badge-info {
+            background: #DBEAFE;
+            color: #1E40AF
+        }
+
+        .badge-gray {
+            background: var(--bg);
+            color: var(--muted);
+            border: 1px solid var(--border)
+        }
+
+        .badge-livraison {
+            background: #F3E8FF;
+            color: #6B21A8
+        }
+
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px
+        }
+
+        .stat-card {
+            background: var(--surface);
             border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            box-shadow: var(--shadow)
         }
 
-        .actions {
+        .stat-val {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Playfair Display', serif
+        }
+
+        .stat-lbl {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        /* FORMATS */
+        .formats-list {
             display: flex;
+            flex-direction: column;
             gap: 6px;
+            margin-top: 6px
         }
 
-        /* ── MODAL ───────────────────────────────────────── */
-        .modal-overlay {
+        .fmt-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 7px 10px
+        }
+
+        .fmt-row input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            outline: none
+        }
+
+        .fmt-row input::placeholder {
+            color: var(--muted)
+        }
+
+        .fmt-name {
+            flex: 1
+        }
+
+        .fmt-price {
+            width: 110px;
+            text-align: right
+        }
+
+        .btn-rm {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 2px;
+            line-height: 1
+        }
+
+        .btn-rm:hover {
+            color: var(--danger)
+        }
+
+        .btn-add-fmt {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            background: none;
+            border: 1px dashed var(--border);
+            border-radius: 7px;
+            color: var(--muted);
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all .15s;
+            margin-top: 4px;
+            width: 100%
+        }
+
+        .btn-add-fmt:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        /* MODAL */
+        .overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 100;
+            background: rgba(0, 0, 0, .35);
+            backdrop-filter: blur(2px);
+            z-index: 200;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px
         }
 
-        .modal-overlay.open {
-            display: flex;
+        .overlay.open {
+            display: flex
         }
 
         .modal {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
+            background: var(--surface);
+            border-radius: 14px;
             width: 100%;
-            max-width: 560px;
+            max-width: 580px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-            animation: modalIn 0.3s ease;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .15);
+            animation: mIn .25s ease
         }
 
-        @keyframes modalIn {
+        @keyframes mIn {
             from {
                 opacity: 0;
-                transform: scale(0.95)
+                transform: scale(.96)
             }
 
             to {
@@ -604,18 +727,18 @@
             }
         }
 
-        .modal-header {
-            padding: 22px 24px 18px;
+        .modal-hdr {
+            padding: 18px 20px 14px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-between
         }
 
         .modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 18px;
-            color: var(--cream);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary)
         }
 
         .modal-close {
@@ -624,268 +747,177 @@
             color: var(--muted);
             font-size: 20px;
             cursor: pointer;
-            padding: 4px;
+            padding: 2px 6px;
+            border-radius: 5px
         }
 
         .modal-close:hover {
-            color: var(--text);
+            background: var(--bg);
+            color: var(--text)
         }
 
         .modal-body {
-            padding: 24px;
+            padding: 20px
         }
 
-        .modal-footer {
-            padding: 16px 24px;
+        .modal-ftr {
+            padding: 14px 20px;
             border-top: 1px solid var(--border);
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+            gap: 8px;
+            justify-content: flex-end
         }
 
-        /* ── FORMATS (sous-items d'un plat) ─────────────── */
-        .formats-list {
+        /* COMMANDES */
+        .order-filters {
             display: flex;
-            flex-direction: column;
             gap: 8px;
-            margin-top: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center
         }
 
-        .format-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            background: var(--bg3);
+        .filter-input {
+            padding: 7px 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-        }
-
-        .format-row input {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-        }
-
-        .format-row input::placeholder {
-            color: var(--muted);
-        }
-
-        .format-name {
-            flex: 1;
-        }
-
-        .format-price {
-            width: 100px;
-            text-align: right;
-        }
-
-        .btn-remove-format {
-            background: none;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-size: 16px;
-            padding: 0 4px;
-        }
-
-        .btn-remove-format:hover {
-            color: #e74c3c;
-        }
-
-        .btn-add-format {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            background: none;
-            border: 1px dashed var(--border);
-            border-radius: 8px;
-            color: var(--muted);
+            border-radius: 7px;
             font-size: 12px;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.2s;
-            margin-top: 4px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--surface);
+            outline: none
         }
 
-        .btn-add-format:hover {
-            border-color: var(--gold);
-            color: var(--gold);
+        .filter-input:focus {
+            border-color: var(--accent)
         }
 
-        /* ── TOAST ───────────────────────────────────────── */
+        .filter-sel {
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--surface);
+            outline: none;
+            cursor: pointer
+        }
+
+        /* PAYMENT PROOF */
+        .proof-img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-top: 8px
+        }
+
+        .proof-ref {
+            display: inline-block;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: var(--text);
+            margin-top: 6px;
+            font-family: monospace
+        }
+
+        /* TOAST */
         .toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 18px;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px 18px;
             font-size: 13px;
-            color: var(--text);
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
             z-index: 999;
             transform: translateY(80px);
             opacity: 0;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            transition: all .3s
         }
 
         .toast.show {
             transform: translateY(0);
-            opacity: 1;
+            opacity: 1
         }
 
-        .toast.success {
-            border-color: var(--success);
-        }
-
-        .toast.error {
-            border-color: var(--danger);
-        }
-
-        /* ── STATS CARDS ─────────────────────────────────── */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-        }
-
-        .stat-card .stat-val {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: var(--gold2);
-        }
-
-        .stat-card .stat-lbl {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ── EMPTY STATE ─────────────────────────────────── */
-        .empty-state {
-            text-align: center;
-            padding: 48px 20px;
-            color: var(--muted);
-        }
-
-        .empty-state .empty-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 14px;
-        }
-
-        /* ── RESPONSIVE ──────────────────────────────────── */
+        /* MOBILE */
         .mobile-nav {
             display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 6px 0 env(safe-area-inset-bottom, 6px)
         }
 
-        @media (max-width: 768px) {
+        @media(max-width:768px) {
             body {
-                flex-direction: column;
+                flex-direction: column
             }
 
             .sidebar {
-                display: none;
+                display: none
             }
 
             .mobile-nav {
-                display: flex;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 100;
-                background: var(--bg2);
-                border-top: 1px solid var(--border);
-                padding: 6px 0 env(safe-area-inset-bottom, 6px);
+                display: flex
             }
 
-            .mobile-nav-item {
+            .mn-item {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 3px;
+                gap: 2px;
                 padding: 6px 4px;
-                cursor: pointer;
                 border: none;
                 background: none;
-                color: var(--muted);
-                font-family: "DM Sans", sans-serif;
+                font-family: 'Inter', sans-serif;
                 font-size: 9px;
                 font-weight: 600;
+                color: var(--muted);
+                cursor: pointer;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
-                transition: color 0.2s;
+                letter-spacing: .5px;
+                transition: color .15s
             }
 
-            .mobile-nav-item .mn-icon {
-                font-size: 20px;
+            .mn-item .i {
+                font-size: 18px
             }
 
-            .mobile-nav-item.active {
-                color: var(--gold2);
+            .mn-item.active {
+                color: var(--accent)
             }
 
             .main {
-                padding-bottom: 72px;
+                padding-bottom: 64px
             }
 
             .content {
-                padding: 14px;
+                padding: 14px
             }
 
             .grid-2,
             .grid-3 {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr
             }
 
             .stats-row {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr)
             }
 
             .topbar {
-                padding: 14px 16px;
-            }
-
-            .topbar-title {
-                font-size: 18px;
-            }
-
-            .btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-
-            .table-wrap {
-                overflow-x: auto;
-            }
-
-            table {
-                min-width: 500px;
+                padding: 12px 14px
             }
         }
 
@@ -894,489 +926,426 @@
 
 <body>
 
-    <!-- ── SIDEBAR ─────────────────────────────────────────── -->
     <aside class="sidebar">
-        <div class="sidebar-logo">
-            <div class="icon">🍝</div>
-            <h1>Lasagna Mia</h1>
-            <p>Administration</p>
+        <div class="sb-brand">
+            <div class="sb-name" id="sb-resto-name">Lasagna Mia</div>
+            <div class="sb-sub">Administration</div>
         </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section-title">Général</div>
-            <div class="nav-item active" onclick="showSection('restaurant', this)">
-                <span class="nav-icon">🏪</span>
-                <span>Restaurant</span>
-            </div>
-            <div class="nav-item" onclick="showSection('horaires', this)">
-                <span class="nav-icon">🕐</span>
-                <span>Horaires</span>
-            </div>
-            <div class="nav-section-title">Carte</div>
-            <div class="nav-item" onclick="showSection('plats', this)">
-                <span class="nav-icon">🍽️</span>
-                <span>Plats</span>
-            </div>
-            <div class="nav-section-title">Activité</div>
-            <div class="nav-item" onclick="showSection('commandes', this)">
-                <span class="nav-icon">📋</span>
-                <span>Commandes</span>
-            </div>
+        <nav class="sb-nav">
+            <div class="sb-section">Général</div>
+            <button class="sb-item active" onclick="nav('restaurant',this)"><span class="ico">🏪</span>Restaurant</button>
+            <button class="sb-item" onclick="nav('horaires',this)"><span class="ico">🕐</span>Horaires</button>
+            <div class="sb-section">Carte</div>
+            <button class="sb-item" onclick="nav('categories',this)"><span class="ico">📂</span>Catégories</button>
+            <button class="sb-item" onclick="nav('plats',this)"><span class="ico">🍽️</span>Plats</button>
+            <div class="sb-section">Activité</div>
+            <button class="sb-item" onclick="nav('commandes',this)"><span class="ico">📋</span>Commandes</button>
         </nav>
-        <div class="sidebar-footer">
-            <span class="status-dot"></span>
-            Connecté à Supabase
+        <div class="sb-footer">
+            <div class="online-dot"></div> Supabase connecté
         </div>
     </aside>
 
-    <!-- ── MAIN ───────────────────────────────────────────── -->
     <main class="main">
-
-        <!-- TOPBAR -->
         <div class="topbar">
-            <div>
-                <div class="topbar-title" id="topbar-title">Restaurant</div>
-                <div class="topbar-sub" id="topbar-sub">Informations générales</div>
+            <div class="topbar-left">
+                <h2 id="tb-title">Restaurant</h2>
+                <p id="tb-sub">Informations générales</p>
             </div>
-            <button class="btn btn-primary" id="topbar-action" onclick="topbarAction()">
-                💾 Enregistrer
-            </button>
+            <div style="display:flex;gap:8px" id="tb-actions"></div>
         </div>
-
         <div class="content">
 
-            <!-- ── SECTION RESTAURANT ──────────────────────── -->
-            <div class="section active" id="section-restaurant">
+            <!-- RESTAURANT -->
+            <div class="section active" id="sec-restaurant">
                 <div class="card">
                     <div class="card-title">🏪 Identité</div>
                     <div class="grid-2">
-                        <div class="field">
-                            <label>Nom du restaurant</label>
-                            <input type="text" id="r-nom" placeholder="Lasagna Mia" />
-                        </div>
-                        <div class="field">
-                            <label>Slogan</label>
-                            <input type="text" id="r-slogan" placeholder="Les vraies lasagnes maison" />
-                        </div>
+                        <div class="field"><label>Nom du restaurant</label><input id="r-nom" placeholder="Lasagna Mia" /></div>
+                        <div class="field"><label>Devise</label><input id="r-devise" placeholder="FCFA" /></div>
                     </div>
-                    <div class="field">
-                        <label>Description courte</label>
-                        <textarea id="r-description" placeholder="Décrivez votre restaurant en quelques mots..."></textarea>
-                    </div>
+                    <div class="field"><label>Slogan</label><input id="r-slogan" placeholder="Les vraies lasagnes maison" /></div>
+                    <div class="field"><label>Description</label><textarea id="r-description" placeholder="Décrivez votre restaurant…"></textarea></div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">📞 Contacts</div>
                     <div class="grid-2">
-                        <div class="field">
-                            <label>Numéro WhatsApp</label>
-                            <input type="text" id="r-whatsapp" placeholder="+228 90053029" />
-                        </div>
-                        <div class="field">
-                            <label>Téléphone secondaire</label>
-                            <input type="text" id="r-tel2" placeholder="Optionnel" />
-                        </div>
-                        <div class="field">
-                            <label>Email</label>
-                            <input type="email" id="r-email" placeholder="contact@lasagnamia.com" />
-                        </div>
-                        <div class="field">
-                            <label>Ville / Zone de livraison</label>
-                            <input type="text" id="r-ville" placeholder="Lomé, Togo" />
-                        </div>
+                        <div class="field"><label>WhatsApp principal</label><input id="r-whatsapp" placeholder="+22890053029" /></div>
+                        <div class="field"><label>Téléphone secondaire</label><input id="r-tel2" placeholder="Optionnel" /></div>
+                        <div class="field"><label>Email</label><input id="r-email" type="email" placeholder="contact@lasagnamia.com" /></div>
+                        <div class="field"><label>Ville</label><input id="r-ville" placeholder="Lomé" /></div>
                     </div>
                 </div>
-
+                <div class="card">
+                    <div class="card-title">📍 Localisation du restaurant</div>
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Latitude</label>
+                            <div class="field-row">
+                                <div class="field"><input id="r-latitude" placeholder="6.1375" /></div>
+                                <button class="btn btn-ghost btn-sm" onclick="geolocate()" style="margin-bottom:0;height:37px">📡 Me localiser</button>
+                            </div>
+                        </div>
+                        <div class="field"><label>Longitude</label><input id="r-longitude" placeholder="1.2123" /></div>
+                    </div>
+                </div>
                 <div class="card">
                     <div class="card-title">🌐 Réseaux sociaux</div>
                     <div class="grid-2">
-                        <div class="field">
-                            <label>Instagram</label>
-                            <input type="text" id="r-instagram" placeholder="@lasagnamia" />
-                        </div>
-                        <div class="field">
-                            <label>Facebook</label>
-                            <input type="text" id="r-facebook" placeholder="facebook.com/lasagnamia" />
-                        </div>
+                        <div class="field"><label>Instagram</label><input id="r-instagram" placeholder="@lasagnamia" /></div>
+                        <div class="field"><label>Facebook</label><input id="r-facebook" placeholder="facebook.com/lasagnamia" /></div>
                     </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">💳 Message de paiement</div>
+                    <div class="field"><textarea id="r-message-paiement" rows="4" placeholder="Instructions T-Money, Moov Money…"></textarea></div>
                 </div>
             </div>
 
-            <!-- ── SECTION HORAIRES ────────────────────────── -->
-            <div class="section" id="section-horaires">
-
+            <!-- HORAIRES -->
+            <div class="section" id="sec-horaires">
                 <div class="card">
-                    <div class="card-title">📅 Jours d'ouverture (livraison)</div>
-                    <div class="days-grid" id="days-livraison">
-                        <div class="day-toggle" data-day="1" onclick="toggleDay(this, 'livraison')">Lun</div>
-                        <div class="day-toggle" data-day="2" onclick="toggleDay(this, 'livraison')">Mar</div>
-                        <div class="day-toggle selected" data-day="3" onclick="toggleDay(this, 'livraison')">Mer</div>
-                        <div class="day-toggle" data-day="4" onclick="toggleDay(this, 'livraison')">Jeu</div>
-                        <div class="day-toggle selected" data-day="5" onclick="toggleDay(this, 'livraison')">Ven</div>
-                        <div class="day-toggle selected" data-day="6" onclick="toggleDay(this, 'livraison')">Sam</div>
-                        <div class="day-toggle" data-day="0" onclick="toggleDay(this, 'livraison')">Dim</div>
+                    <div class="card-title">📅 Jours de livraison</div>
+                    <div class="days-grid" id="days-grid">
+                        <div class="day-btn" data-day="1" onclick="toggleDay(this)">Lun</div>
+                        <div class="day-btn" data-day="2" onclick="toggleDay(this)">Mar</div>
+                        <div class="day-btn on" data-day="3" onclick="toggleDay(this)">Mer</div>
+                        <div class="day-btn" data-day="4" onclick="toggleDay(this)">Jeu</div>
+                        <div class="day-btn on" data-day="5" onclick="toggleDay(this)">Ven</div>
+                        <div class="day-btn on" data-day="6" onclick="toggleDay(this)">Sam</div>
+                        <div class="day-btn" data-day="0" onclick="toggleDay(this)">Dim</div>
                     </div>
-                    <div class="time-row" style="margin-top:16px;">
-                        <span class="time-label">Heure début de livraison</span>
-                        <input type="time" class="time-input" id="h-livraison-debut" value="07:00" />
-                    </div>
-                    <div class="time-row">
-                        <span class="time-label">Heure fin de livraison</span>
-                        <input type="time" class="time-input" id="h-livraison-fin" value="13:00" />
+                    <div style="margin-top:14px;display:flex;gap:14px;flex-wrap:wrap">
+                        <div class="field" style="flex:1;min-width:120px;margin:0"><label>Début livraison</label><input type="time" id="h-livraison-debut" value="07:00" /></div>
+                        <div class="field" style="flex:1;min-width:120px;margin:0"><label>Fin livraison</label><input type="time" id="h-livraison-fin" value="13:00" /></div>
                     </div>
                 </div>
-
                 <div class="card">
-                    <div class="card-title">🛒 Prise de commandes</div>
-
+                    <div class="card-title">🛒 Prises de commandes</div>
                     <div class="toggle-row">
                         <div>
-                            <div class="toggle-label">Commandes la veille</div>
-                            <div class="toggle-desc">Accepter les commandes le soir avant le jour de livraison</div>
+                            <div class="tl">Commandes la veille</div>
+                            <div class="td">Accepter les commandes la veille du jour de livraison</div>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="opt-veille" checked onchange="toggleVeille()" />
-                            <span class="slider"></span>
-                        </label>
+                        <label class="switch"><input type="checkbox" id="opt-veille" checked onchange="toggleSection('veille-cfg',this.checked)" /><span class="sw-slider"></span></label>
                     </div>
-
-                    <div id="veille-config">
-                        <div class="time-row">
-                            <span class="time-label">La veille — ouverture des commandes</span>
-                            <input type="time" class="time-input" id="h-veille-debut" value="15:00" />
-                        </div>
-                        <div class="time-row">
-                            <span class="time-label">La veille — fermeture des commandes</span>
-                            <input type="time" class="time-input" id="h-veille-fin" value="23:59" />
+                    <div id="veille-cfg" style="padding:10px 0 4px">
+                        <div style="display:flex;gap:14px;flex-wrap:wrap">
+                            <div class="field" style="flex:1;min-width:120px;margin:0"><label>Ouverture veille</label><input type="time" id="h-veille-debut" value="09:00" /></div>
+                            <div class="field" style="flex:1;min-width:120px;margin:0"><label>Fermeture veille</label><input type="time" id="h-veille-fin" value="23:59" /></div>
                         </div>
                     </div>
-
-                    <div class="toggle-row" style="margin-top:12px;">
+                    <div class="toggle-row" style="margin-top:8px">
                         <div>
-                            <div class="toggle-label">Commandes le jour même</div>
-                            <div class="toggle-desc">Accepter les commandes le matin du jour de livraison</div>
+                            <div class="tl">Commandes le jour même</div>
+                            <div class="td">Accepter les commandes le matin du jour de livraison</div>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="opt-jour" checked onchange="toggleJour()" />
-                            <span class="slider"></span>
-                        </label>
+                        <label class="switch"><input type="checkbox" id="opt-jour" checked onchange="toggleSection('jour-cfg',this.checked)" /><span class="sw-slider"></span></label>
                     </div>
-
-                    <div id="jour-config">
-                        <div class="time-row">
-                            <span class="time-label">Jour J — ouverture des commandes</span>
-                            <input type="time" class="time-input" id="h-jour-debut" value="00:00" />
-                        </div>
-                        <div class="time-row">
-                            <span class="time-label">Jour J — fermeture des commandes</span>
-                            <input type="time" class="time-input" id="h-jour-fin" value="10:00" />
+                    <div id="jour-cfg" style="padding:10px 0 4px">
+                        <div style="display:flex;gap:14px;flex-wrap:wrap">
+                            <div class="field" style="flex:1;min-width:120px;margin:0"><label>Ouverture jour J</label><input type="time" id="h-jour-debut" value="07:00" /></div>
+                            <div class="field" style="flex:1;min-width:120px;margin:0"><label>Fermeture jour J</label><input type="time" id="h-jour-fin" value="10:00" /></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-title">💬 Message hors horaires</div>
-                    <div class="field">
-                        <label>Message envoyé aux clients hors créneau</label>
-                        <textarea id="h-message-ferme" placeholder="Bonjour ! Nous sommes actuellement fermés..."></textarea>
-                    </div>
+                    <div class="field"><textarea id="h-message-ferme" placeholder="Message envoyé automatiquement hors créneau…"></textarea></div>
                 </div>
             </div>
 
-            <!-- ── SECTION PLATS ───────────────────────────── -->
-            <div class="section" id="section-plats">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <div>
-                        <div class="stats-row" style="margin-bottom:0;">
-                            <div class="stat-card">
-                                <div class="stat-val" id="stat-plats">–</div>
-                                <div class="stat-lbl">Plats actifs</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-val" id="stat-cats">–</div>
-                                <div class="stat-lbl">Catégories</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-val" id="stat-formats">–</div>
-                                <div class="stat-lbl">Formats</div>
-                            </div>
+            <!-- CATÉGORIES -->
+            <div class="section" id="sec-categories">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                    <div style="font-size:13px;color:var(--muted)" id="cat-count"></div>
+                    <button class="btn btn-primary" onclick="openCatModal()">+ Nouvelle catégorie</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Ordre</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cats-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PLATS -->
+            <div class="section" id="sec-plats">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+                    <div class="stats-row" style="margin:0;grid-template-columns:repeat(3,1fr);gap:10px">
+                        <div class="stat-card">
+                            <div class="stat-val" id="sp-total">–</div>
+                            <div class="stat-lbl">Plats</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" id="sp-actifs">–</div>
+                            <div class="stat-lbl">Disponibles</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" id="sp-cats">–</div>
+                            <div class="stat-lbl">Catégories</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="openPlatModal()">＋ Nouveau plat</button>
+                    <button class="btn btn-primary" onclick="openPlatModal()">+ Nouveau plat</button>
                 </div>
-
-                <div class="card" style="padding:0">
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Plat</th>
-                                    <th>Catégorie</th>
-                                    <th>Formats / Prix</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="plats-tbody">
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">🍽️</div>
-                                            <p>Chargement...</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plat</th>
+                                <th>Catégorie</th>
+                                <th>Temp.</th>
+                                <th>Formats / Prix</th>
+                                <th>Dispo</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plats-tbody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- ── SECTION COMMANDES ───────────────────────── -->
-            <div class="section" id="section-commandes">
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="stat-val" id="cmd-pending">–</div>
-                        <div class="stat-lbl">En attente</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-val" id="cmd-delivered">–</div>
-                        <div class="stat-lbl">Livrées</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-val" id="cmd-ca">–</div>
-                        <div class="stat-lbl">CA total (FCFA)</div>
-                    </div>
+            <!-- COMMANDES -->
+            <div class="section" id="sec-commandes">
+                <div class="stats-row" id="cmd-stats"></div>
+                <div class="order-filters">
+                    <input class="filter-input" id="f-search" placeholder="🔍 Rechercher…" oninput="renderCmds()" />
+                    <select class="filter-sel" id="f-statut" onchange="renderCmds()">
+                        <option value="">Tous les statuts</option>
+                        <option value="attente_adresse">Attente adresse</option>
+                        <option value="attente_prix_livraison">Attente prix livraison</option>
+                        <option value="attente_confirmation">Attente confirmation</option>
+                        <option value="attente_paiement">Attente paiement</option>
+                        <option value="commande_confirmee">Commande confirmée</option>
+                        <option value="en_livraison">En livraison</option>
+                        <option value="imminent">Livreur proche</option>
+                        <option value="livree">Livrée</option>
+                        <option value="annulee">Annulée</option>
+                    </select>
+                    <input class="filter-input" id="f-date" type="date" onchange="renderCmds()" />
+                    <button class="btn btn-ghost btn-sm" onclick="loadCmds()">🔄</button>
                 </div>
-                <div class="card" style="padding:0">
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Client</th>
-                                    <th>Commande</th>
-                                    <th>Total</th>
-                                    <th>Adresse</th>
-                                    <th>Heure</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cmd-tbody">
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">📋</div>
-                                            <p>Chargement...</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Client</th>
+                                <th>Commande</th>
+                                <th>Total</th>
+                                <th>Livraison</th>
+                                <th>Statut</th>
+                                <th>Heure</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cmds-tbody"></tbody>
+                    </table>
                 </div>
             </div>
 
         </div><!-- /content -->
     </main>
 
-    <!-- ── MODAL PLAT ──────────────────────────────────────── -->
-    <div class="modal-overlay" id="plat-modal">
+    <!-- MODAL CATÉGORIE -->
+    <div class="overlay" id="cat-modal">
         <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title" id="plat-modal-title">Nouveau plat</div>
-                <button class="modal-close" onclick="closePlatModal()">✕</button>
+            <div class="modal-hdr">
+                <div class="modal-title" id="cat-modal-title">Catégorie</div>
+                <button class="modal-close" onclick="closeModal('cat-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="cat-id" />
+                <div class="field"><label>Nom</label><input id="cat-nom" placeholder="Ex: Lasagnes" /></div>
+                <div class="field"><label>Ordre d'affichage</label><input id="cat-ordre" type="number" placeholder="1" value="1" /></div>
+            </div>
+            <div class="modal-ftr">
+                <button class="btn btn-ghost" onclick="closeModal('cat-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="saveCat()">💾 Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PLAT -->
+    <div class="overlay" id="plat-modal">
+        <div class="modal">
+            <div class="modal-hdr">
+                <div class="modal-title" id="plat-modal-title">Plat</div>
+                <button class="modal-close" onclick="closeModal('plat-modal')">✕</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="plat-id" />
                 <div class="grid-2">
-                    <div class="field">
-                        <label>Nom du plat</label>
-                        <input type="text" id="plat-nom" placeholder="Lasagne Bolognaise" />
-                    </div>
-                    <div class="field">
-                        <label>Catégorie</label>
-                        <select id="plat-categorie">
-                            <option value="lasagnes">🍝 Lasagnes</option>
-                            <option value="combos">🎁 Combos</option>
-                            <option value="desserts">🍰 Desserts</option>
-                            <option value="autres">🥪 Autres</option>
+                    <div class="field"><label>Catégorie</label><select id="plat-cat"></select></div>
+                    <div class="field"><label>Température</label>
+                        <select id="plat-temp">
+                            <option value="chaud">🔥 Chaud</option>
+                            <option value="froid">🥶 Froid</option>
                         </select>
                     </div>
                 </div>
-                <div class="field">
-                    <label>Description (optionnel)</label>
-                    <input type="text" id="plat-description" placeholder="Feuilles de lasagne, béchamel, sauce bolognaise, fromage" />
-                </div>
-
+                <div class="field"><label>Nom du plat</label><input id="plat-nom" placeholder="Ex: Lasagne Bolognaise" /></div>
+                <div class="field"><label>Description (optionnel)</label><input id="plat-desc" placeholder="Ingrédients, info…" /></div>
                 <div class="field">
                     <label>Formats & prix</label>
-                    <div class="formats-list" id="formats-list"></div>
-                    <button class="btn-add-format" onclick="addFormat()">＋ Ajouter un format</button>
-                    <p style="font-size:11px;color:var(--muted);margin-top:8px;">
-                        Laissez un seul format sans nom si le plat n'a pas de variante (ex: Croque-Monsieur 1500 FCFA)
-                    </p>
+                    <div class="formats-list" id="fmt-list"></div>
+                    <button class="btn-add-fmt" onclick="addFmt()">+ Ajouter un format</button>
+                    <p style="font-size:11px;color:var(--muted);margin-top:6px">Un seul format sans nom = prix unique. Plusieurs formats = variantes (S, M, L…)</p>
                 </div>
-
                 <div class="toggle-row">
                     <div>
-                        <div class="toggle-label">Plat disponible</div>
-                        <div class="toggle-desc">Masquer temporairement sans supprimer</div>
+                        <div class="tl">Disponible</div>
+                        <div class="td">Visible dans le menu WhatsApp</div>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" id="plat-actif" checked />
-                        <span class="slider"></span>
-                    </label>
+                    <label class="switch"><input type="checkbox" id="plat-actif" checked /><span class="sw-slider"></span></label>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closePlatModal()">Annuler</button>
+            <div class="modal-ftr">
+                <button class="btn btn-ghost" onclick="closeModal('plat-modal')">Annuler</button>
                 <button class="btn btn-primary" onclick="savePlat()">💾 Enregistrer</button>
             </div>
         </div>
     </div>
 
-    <!-- TOAST -->
+    <!-- MODAL COMMANDE -->
+    <div class="overlay" id="cmd-modal">
+        <div class="modal" style="max-width:640px">
+            <div class="modal-hdr">
+                <div class="modal-title" id="cm-title">Commande</div>
+                <button class="modal-close" onclick="closeModal('cmd-modal')">✕</button>
+            </div>
+            <div class="modal-body" id="cm-body"></div>
+            <div class="modal-ftr" id="cm-actions"></div>
+        </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav">
+        <button class="mn-item active" id="mn-restaurant" onclick="nav('restaurant',this);syncMn('restaurant')"><span class="i">🏪</span>Restaurant</button>
+        <button class="mn-item" id="mn-horaires" onclick="nav('horaires',this);syncMn('horaires')"><span class="i">🕐</span>Horaires</button>
+        <button class="mn-item" id="mn-categories" onclick="nav('categories',this);syncMn('categories')"><span class="i">📂</span>Carte</button>
+        <button class="mn-item" id="mn-commandes" onclick="nav('commandes',this);syncMn('commandes')"><span class="i">📋</span>Commandes</button>
+    </nav>
+
     <div class="toast" id="toast"></div>
 
     <script>
-        // ── CONFIG SUPABASE ──────────────────────────────────
         const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
+        const RAILWAY_URL = 'bonmatin-bot-production.up.railway.app';
         const {
             createClient
         } = supabase;
         const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ── STATE ────────────────────────────────────────────
-        let plats = [];
-        let currentSection = 'restaurant';
+        let cats = [],
+            plats = [],
+            cmds = [],
+            currentCmd = null;
 
-        // ── INIT ─────────────────────────────────────────────
-        async function init() {
-            await loadConfig();
-            await loadPlats();
-            await loadCommandes();
-        }
-        init();
-
-        // ── NAVIGATION ───────────────────────────────────────
-        const SECTION_META = {
+        // ── NAVIGATION ───────────────────────────────────────────────
+        const NAV_META = {
             restaurant: {
                 title: 'Restaurant',
                 sub: 'Informations générales',
-                action: '💾 Enregistrer'
+                action: '💾 Enregistrer',
+                fn: 'saveRestaurant'
             },
             horaires: {
                 title: 'Horaires',
                 sub: 'Jours & créneaux',
-                action: '💾 Enregistrer'
+                action: '💾 Enregistrer',
+                fn: 'saveHoraires'
+            },
+            categories: {
+                title: 'Catégories',
+                sub: 'Gestion des catégories',
+                action: null
             },
             plats: {
                 title: 'Carte',
                 sub: 'Gestion des plats',
-                action: '🔄 Actualiser le bot'
+                action: '🔄 Actualiser bot',
+                fn: 'refreshBot'
             },
             commandes: {
                 title: 'Commandes',
-                sub: 'Historique des commandes',
-                action: '🔄 Actualiser'
+                sub: 'Suivi des commandes',
+                action: '🔄',
+                fn: 'loadCmds'
             },
         };
 
-        function showSection(name, el) {
+        function nav(name, el) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(`section-${name}`).classList.add('active');
-            el.classList.add('active');
-            currentSection = name;
-            const m = SECTION_META[name];
-            document.getElementById('topbar-title').textContent = m.title;
-            document.getElementById('topbar-sub').textContent = m.sub;
-            document.getElementById('topbar-action').innerHTML = m.action;
-            if (name === 'commandes') loadCommandes();
+            document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sec-${name}`).classList.add('active');
+            if (el) el.classList.add('active');
+            const m = NAV_META[name];
+            document.getElementById('tb-title').textContent = m.title;
+            document.getElementById('tb-sub').textContent = m.sub;
+            const actEl = document.getElementById('tb-actions');
+            actEl.innerHTML = m.action ?
+                `<button class="btn btn-primary btn-sm" onclick="${m.fn}()">${m.action}</button>` : '';
+            if (name === 'commandes') loadCmds();
+            if (name === 'categories') loadCats();
+            if (name === 'plats') loadPlats();
         }
 
-        function topbarAction() {
-            if (currentSection === 'restaurant') saveRestaurant();
-            else if (currentSection === 'horaires') saveHoraires();
-            else if (currentSection === 'plats') refreshBot();
-            else if (currentSection === 'commandes') loadCommandes();
+        function syncMn(name) {
+            document.querySelectorAll('.mn-item').forEach(b => b.classList.remove('active'));
+            const el = document.getElementById(`mn-${name}`);
+            if (el) el.classList.add('active');
         }
 
-        const RAILWAY_URL = 'https://bonmatin-bot-production.up.railway.app'; // ex: https://lasagnamia-bot.up.railway.app
-
-        async function refreshBot() {
-            const btn = document.getElementById('topbar-action');
-            btn.innerHTML = '⏳ Actualisation...';
-            btn.disabled = true;
-            try {
-                const r = await fetch(`${RAILWAY_URL}/refresh`, {
-                    method: 'POST'
-                });
-                const d = await r.json();
-                showToast(`Bot actualisé — ${d.plats} plats, ${d.config} clés config`);
-            } catch (err) {
-                showToast('Impossible de contacter le bot. Vérifiez RAILWAY_URL.', 'error');
-            }
-            btn.innerHTML = '🔄 Actualiser le bot';
-            btn.disabled = false;
-        }
-
-        // ── TOAST ─────────────────────────────────────────────
-        function showToast(msg, type = 'success') {
+        // ── TOAST ───────────────────────────────────────────────────
+        function toast(msg, ok = true) {
             const t = document.getElementById('toast');
-            t.textContent = type === 'success' ? '✅ ' + msg : '❌ ' + msg;
-            t.className = `toast ${type} show`;
+            t.textContent = (ok ? '✅ ' : '❌ ') + msg;
+            t.style.background = ok ? 'var(--primary)' : '#991B1B';
+            t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // ── CONFIG (clé-valeur dans Supabase) ────────────────
+        // ── CONFIG ──────────────────────────────────────────────────
         async function loadConfig() {
             const {
                 data
             } = await db.from('config').select('*');
             if (!data) return;
             const cfg = Object.fromEntries(data.map(r => [r.key, r.value]));
-
-            // Restaurant
-            if (cfg['r-nom']) document.getElementById('r-nom').value = cfg['r-nom'];
-            if (cfg['r-slogan']) document.getElementById('r-slogan').value = cfg['r-slogan'];
-            if (cfg['r-description']) document.getElementById('r-description').value = cfg['r-description'];
-            if (cfg['r-whatsapp']) document.getElementById('r-whatsapp').value = cfg['r-whatsapp'];
-            if (cfg['r-tel2']) document.getElementById('r-tel2').value = cfg['r-tel2'];
-            if (cfg['r-email']) document.getElementById('r-email').value = cfg['r-email'];
-            if (cfg['r-ville']) document.getElementById('r-ville').value = cfg['r-ville'];
-            if (cfg['r-instagram']) document.getElementById('r-instagram').value = cfg['r-instagram'];
-            if (cfg['r-facebook']) document.getElementById('r-facebook').value = cfg['r-facebook'];
-
-            // Horaires
-            if (cfg['h-livraison-debut']) document.getElementById('h-livraison-debut').value = cfg['h-livraison-debut'];
-            if (cfg['h-livraison-fin']) document.getElementById('h-livraison-fin').value = cfg['h-livraison-fin'];
-            if (cfg['h-veille-debut']) document.getElementById('h-veille-debut').value = cfg['h-veille-debut'];
-            if (cfg['h-veille-fin']) document.getElementById('h-veille-fin').value = cfg['h-veille-fin'];
-            if (cfg['h-jour-debut']) document.getElementById('h-jour-debut').value = cfg['h-jour-debut'];
-            if (cfg['h-jour-fin']) document.getElementById('h-jour-fin').value = cfg['h-jour-fin'];
-            if (cfg['h-message-ferme']) document.getElementById('h-message-ferme').value = cfg['h-message-ferme'];
-
+            const fields = ['r-nom', 'r-slogan', 'r-description', 'r-whatsapp', 'r-tel2', 'r-email',
+                'r-ville', 'r-latitude', 'r-longitude', 'r-devise', 'r-instagram', 'r-facebook', 'r-message-paiement',
+                'h-livraison-debut', 'h-livraison-fin', 'h-veille-debut', 'h-veille-fin', 'h-jour-debut', 'h-jour-fin', 'h-message-ferme'
+            ];
+            fields.forEach(f => {
+                const el = document.getElementById(f);
+                if (el && cfg[f]) el.value = cfg[f];
+            });
             if (cfg['opt-veille'] === 'false') {
                 document.getElementById('opt-veille').checked = false;
-                toggleVeille();
+                toggleSection('veille-cfg', false);
             }
             if (cfg['opt-jour'] === 'false') {
                 document.getElementById('opt-jour').checked = false;
-                toggleJour();
+                toggleSection('jour-cfg', false);
             }
-
-            // Jours livraison
             if (cfg['days-livraison']) {
                 const days = JSON.parse(cfg['days-livraison']);
-                document.querySelectorAll('#days-livraison .day-toggle').forEach(el => {
-                    el.classList.toggle('selected', days.includes(parseInt(el.dataset.day)));
-                });
+                document.querySelectorAll('#days-grid .day-btn').forEach(b => b.classList.toggle('on', days.includes(+b.dataset.day)));
+            }
+            if (cfg['r-nom']) {
+                document.getElementById('sb-resto-name').textContent = cfg['r-nom'];
+                document.title = `Admin — ${cfg['r-nom']}`;
             }
         }
 
-        async function setConfig(key, value) {
+        async function setcfg(key, value) {
             await db.from('config').upsert({
                 key,
                 value: String(value)
@@ -1386,115 +1355,184 @@
         }
 
         async function saveRestaurant() {
-            const fields = ['r-nom', 'r-slogan', 'r-description', 'r-whatsapp', 'r-tel2', 'r-email', 'r-ville', 'r-instagram', 'r-facebook'];
-            for (const f of fields) {
-                await setConfig(f, document.getElementById(f).value);
+            const keys = ['r-nom', 'r-slogan', 'r-description', 'r-whatsapp', 'r-tel2', 'r-email',
+                'r-ville', 'r-latitude', 'r-longitude', 'r-devise', 'r-instagram', 'r-facebook', 'r-message-paiement'
+            ];
+            for (const k of keys) await setcfg(k, document.getElementById(k)?.value || '');
+            const nm = document.getElementById('r-nom').value;
+            if (nm) {
+                document.getElementById('sb-resto-name').textContent = nm;
+                document.title = `Admin — ${nm}`;
             }
-            showToast('Informations enregistrées !');
+            toast('Informations enregistrées !');
         }
 
         async function saveHoraires() {
-            const fields = ['h-livraison-debut', 'h-livraison-fin', 'h-veille-debut', 'h-veille-fin', 'h-jour-debut', 'h-jour-fin', 'h-message-ferme'];
-            for (const f of fields) {
-                await setConfig(f, document.getElementById(f).value);
+            const keys = ['h-livraison-debut', 'h-livraison-fin', 'h-veille-debut', 'h-veille-fin', 'h-jour-debut', 'h-jour-fin', 'h-message-ferme'];
+            for (const k of keys) await setcfg(k, document.getElementById(k)?.value || '');
+            await setcfg('opt-veille', document.getElementById('opt-veille').checked);
+            await setcfg('opt-jour', document.getElementById('opt-jour').checked);
+            const days = [...document.querySelectorAll('#days-grid .day-btn.on')].map(b => +b.dataset.day);
+            await setcfg('days-livraison', JSON.stringify(days));
+            toast('Horaires enregistrés !');
+        }
+
+        async function refreshBot() {
+            try {
+                const r = await fetch(`${RAILWAY_URL}/refresh`, {
+                    method: 'POST'
+                });
+                const d = await r.json();
+                toast(`Bot actualisé — ${d.plats} plats, ${d.cats} cats`);
+            } catch {
+                toast('Impossible de contacter le bot', false);
             }
-            await setConfig('opt-veille', document.getElementById('opt-veille').checked);
-            await setConfig('opt-jour', document.getElementById('opt-jour').checked);
-
-            // Jours sélectionnés
-            const days = [...document.querySelectorAll('#days-livraison .day-toggle.selected')].map(el => parseInt(el.dataset.day));
-            await setConfig('days-livraison', JSON.stringify(days));
-
-            showToast('Horaires enregistrés !');
         }
 
-        // ── JOURS / TOGGLES ──────────────────────────────────
-        function toggleDay(el, group) {
-            el.classList.toggle('selected');
+        // ── JOURS / TOGGLE ──────────────────────────────────────────
+        function toggleDay(el) {
+            el.classList.toggle('on');
         }
 
-        function toggleVeille() {
-            document.getElementById('veille-config').style.display =
-                document.getElementById('opt-veille').checked ? 'block' : 'none';
+        function toggleSection(id, show) {
+            document.getElementById(id).style.display = show ? 'block' : 'none';
         }
 
-        function toggleJour() {
-            document.getElementById('jour-config').style.display =
-                document.getElementById('opt-jour').checked ? 'block' : 'none';
+        // ── GEO ──────────────────────────────────────────────────────
+        function geolocate() {
+            if (!navigator.geolocation) return toast('Géolocalisation non disponible', false);
+            navigator.geolocation.getCurrentPosition(p => {
+                document.getElementById('r-latitude').value = p.coords.latitude.toFixed(6);
+                document.getElementById('r-longitude').value = p.coords.longitude.toFixed(6);
+                toast('Position détectée !');
+            }, () => toast('Impossible de détecter la position', false));
         }
 
-        // ── PLATS ─────────────────────────────────────────────
+        // ── CATÉGORIES ───────────────────────────────────────────────
+        async function loadCats() {
+            const {
+                data
+            } = await db.from('categories').select('*').order('ordre');
+            cats = data || [];
+            document.getElementById('cat-count').textContent = `${cats.length} catégorie${cats.length > 1 ? 's' : ''}`;
+            const tb = document.getElementById('cats-tbody');
+            if (!cats.length) {
+                tb.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:32px;color:var(--muted)">Aucune catégorie</td></tr>';
+                return;
+            }
+            tb.innerHTML = cats.map(c => `<tr>
+    <td>${c.nom}</td>
+    <td>${c.ordre}</td>
+    <td><div style="display:flex;gap:6px">
+      <button class="btn btn-ghost btn-sm" onclick="editCat(${c.id})">✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="delCat(${c.id})">🗑️</button>
+    </div></td>
+  </tr>`).join('');
+        }
+
+        function openCatModal(id = null) {
+            document.getElementById('cat-id').value = '';
+            document.getElementById('cat-nom').value = '';
+            document.getElementById('cat-ordre').value = (cats.length + 1);
+            document.getElementById('cat-modal-title').textContent = 'Nouvelle catégorie';
+            document.getElementById('cat-modal').classList.add('open');
+        }
+
+        function editCat(id) {
+            const c = cats.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('cat-id').value = c.id;
+            document.getElementById('cat-nom').value = c.nom;
+            document.getElementById('cat-ordre').value = c.ordre;
+            document.getElementById('cat-modal-title').textContent = 'Modifier la catégorie';
+            document.getElementById('cat-modal').classList.add('open');
+        }
+
+        async function saveCat() {
+            const id = document.getElementById('cat-id').value;
+            const payload = {
+                nom: document.getElementById('cat-nom').value.trim(),
+                ordre: +document.getElementById('cat-ordre').value
+            };
+            if (!payload.nom) return toast('Nom requis', false);
+            const {
+                error
+            } = id
+                ?
+                await db.from('categories').update(payload).eq('id', id) :
+                await db.from('categories').insert(payload);
+            if (error) return toast(error.message, false);
+            closeModal('cat-modal');
+            await loadCats();
+            toast(id ? 'Catégorie modifiée !' : 'Catégorie créée !');
+        }
+
+        async function delCat(id) {
+            if (!confirm('Supprimer cette catégorie ?')) return;
+            await db.from('categories').delete().eq('id', id);
+            await loadCats();
+            toast('Catégorie supprimée');
+        }
+
+        // ── PLATS ────────────────────────────────────────────────────
         async function loadPlats() {
             const {
-                data,
-                error
-            } = await db.from('plats').select('*').order('categorie').order('nom');
-            if (error) {
-                console.error(error);
-                return;
-            }
+                data
+            } = await db.from('plats').select('*, categories(nom)').order('categorie_id').order('nom');
             plats = data || [];
-            renderPlats();
-            updatePlatStats();
-        }
+            document.getElementById('sp-total').textContent = plats.length;
+            document.getElementById('sp-actifs').textContent = plats.filter(p => p.actif).length;
+            document.getElementById('sp-cats').textContent = [...new Set(plats.map(p => p.categorie_id).filter(Boolean))].length;
 
-        function updatePlatStats() {
-            const actifs = plats.filter(p => p.actif);
-            const cats = [...new Set(actifs.map(p => p.categorie))].length;
-            const formats = actifs.reduce((s, p) => s + (p.formats?.length || 1), 0);
-            document.getElementById('stat-plats').textContent = actifs.length;
-            document.getElementById('stat-cats').textContent = cats;
-            document.getElementById('stat-formats').textContent = formats;
-        }
-
-        const CAT_LABELS = {
-            lasagnes: '🍝 Lasagnes',
-            combos: '🎁 Combos',
-            desserts: '🍰 Desserts',
-            autres: '🥪 Autres'
-        };
-
-        function renderPlats() {
-            const tbody = document.getElementById('plats-tbody');
+            const tb = document.getElementById('plats-tbody');
             if (!plats.length) {
-                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🍽️</div><p>Aucun plat. Créez votre premier plat !</p></div></td></tr>';
+                tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Aucun plat</td></tr>';
                 return;
             }
-            tbody.innerHTML = plats.map(p => {
-                const formats = p.formats || [];
-                const formatsHtml = formats.length ?
-                    formats.map(f => `<span class="tag tag-format">${f.nom ? f.nom + ' — ' : ''}${parseInt(f.prix).toLocaleString('fr-FR')} FCFA</span>`).join('') :
-                    '<span style="color:var(--muted);font-size:12px">Prix unique</span>';
-                return `
-        <tr>
-          <td>${p.nom}</td>
-          <td><span class="tag tag-cat">${CAT_LABELS[p.categorie] || p.categorie}</span></td>
-          <td>${formatsHtml}</td>
-          <td>
-            <span style="font-size:12px;color:${p.actif ? 'var(--success)' : 'var(--muted)'}">
-              ${p.actif ? '● Disponible' : '○ Masqué'}
-            </span>
-          </td>
-          <td>
-            <div class="actions">
-              <button class="btn btn-ghost btn-sm" onclick="editPlat(${p.id})">✏️</button>
-              <button class="btn btn-danger btn-sm" onclick="deletePlat(${p.id})">🗑️</button>
-            </div>
-          </td>
-        </tr>`;
+            tb.innerHTML = plats.map(p => {
+                const fmts = (p.formats || []).map(f => `<span class="badge badge-gray" style="margin:1px">${f.nom ? f.nom+' — ' : ''}${parseInt(f.prix||0).toLocaleString('fr-FR')}</span>`).join('');
+                return `<tr>
+      <td>${p.nom}</td>
+      <td><span class="badge badge-info">${p.categories?.nom || '–'}</span></td>
+      <td>${p.temperature === 'froid' ? '🥶 Froid' : '🔥 Chaud'}</td>
+      <td style="max-width:200px">${fmts || '<span style="color:var(--muted);font-size:11px">–</span>'}</td>
+      <td>
+        <label class="switch" title="${p.actif ? 'Disponible' : 'Masqué'}">
+          <input type="checkbox" ${p.actif ? 'checked' : ''} onchange="toggleActif(${p.id},this.checked)"/>
+          <span class="sw-slider"></span>
+        </label>
+      </td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="editPlat(${p.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delPlat(${p.id})">🗑️</button>
+      </div></td>
+    </tr>`;
             }).join('');
         }
 
-        // ── MODAL PLAT ────────────────────────────────────────
-        function openPlatModal(id = null) {
+        async function toggleActif(id, val) {
+            await db.from('plats').update({
+                actif: val
+            }).eq('id', id);
+            plats = plats.map(p => p.id === id ? {
+                ...p,
+                actif: val
+            } : p);
+            document.getElementById('sp-actifs').textContent = plats.filter(p => p.actif).length;
+        }
+
+        function openPlatModal() {
             document.getElementById('plat-id').value = '';
             document.getElementById('plat-nom').value = '';
-            document.getElementById('plat-description').value = '';
-            document.getElementById('plat-categorie').value = 'lasagnes';
+            document.getElementById('plat-desc').value = '';
+            document.getElementById('plat-temp').value = 'chaud';
             document.getElementById('plat-actif').checked = true;
-            document.getElementById('formats-list').innerHTML = '';
             document.getElementById('plat-modal-title').textContent = 'Nouveau plat';
-            addFormat(); // un format par défaut
+            // Remplir catégories
+            const sel = document.getElementById('plat-cat');
+            sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+            document.getElementById('fmt-list').innerHTML = '';
+            addFmt();
             document.getElementById('plat-modal').classList.add('open');
         }
 
@@ -1503,172 +1541,320 @@
             if (!p) return;
             document.getElementById('plat-id').value = p.id;
             document.getElementById('plat-nom').value = p.nom;
-            document.getElementById('plat-description').value = p.description || '';
-            document.getElementById('plat-categorie').value = p.categorie;
+            document.getElementById('plat-desc').value = p.description || '';
+            document.getElementById('plat-temp').value = p.temperature || 'chaud';
             document.getElementById('plat-actif').checked = p.actif;
             document.getElementById('plat-modal-title').textContent = 'Modifier le plat';
-
-            const list = document.getElementById('formats-list');
-            list.innerHTML = '';
-            (p.formats || []).forEach(f => addFormat(f.nom, f.prix));
-            if (!p.formats || !p.formats.length) addFormat();
-
+            const sel = document.getElementById('plat-cat');
+            sel.innerHTML = cats.map(c => `<option value="${c.id}" ${c.id === p.categorie_id ? 'selected' : ''}>${c.nom}</option>`).join('');
+            const fl = document.getElementById('fmt-list');
+            fl.innerHTML = '';
+            (p.formats || []).forEach(f => addFmt(f.nom, f.prix));
+            if (!p.formats?.length) addFmt();
             document.getElementById('plat-modal').classList.add('open');
         }
 
-        function closePlatModal() {
-            document.getElementById('plat-modal').classList.remove('open');
-        }
-
-        function addFormat(nom = '', prix = '') {
-            const list = document.getElementById('formats-list');
+        function addFmt(nom = '', prix = '') {
+            const fl = document.getElementById('fmt-list');
             const row = document.createElement('div');
-            row.className = 'format-row';
-            row.innerHTML = `
-      <input class="format-name" type="text" placeholder="Taille (ex: S, M, L...)" value="${nom}"/>
-      <input class="format-price" type="number" placeholder="Prix FCFA" value="${prix}"/>
-      <button class="btn-remove-format" onclick="this.parentElement.remove()">✕</button>`;
-            list.appendChild(row);
+            row.className = 'fmt-row';
+            row.innerHTML = `<input class="fmt-name" placeholder="Taille (S, M, L…)" value="${nom}"/>
+    <input class="fmt-price" type="number" placeholder="Prix" value="${prix}"/>
+    <button class="btn-rm" onclick="this.parentElement.remove()">✕</button>`;
+            fl.appendChild(row);
         }
 
         async function savePlat() {
             const id = document.getElementById('plat-id').value;
             const nom = document.getElementById('plat-nom').value.trim();
-            const description = document.getElementById('plat-description').value.trim();
-            const categorie = document.getElementById('plat-categorie').value;
-            const actif = document.getElementById('plat-actif').checked;
-
-            if (!nom) {
-                showToast('Le nom du plat est requis.', 'error');
-                return;
-            }
-
-            const formats = [...document.querySelectorAll('.format-row')].map(row => ({
-                nom: row.querySelector('.format-name').value.trim(),
-                prix: parseInt(row.querySelector('.format-price').value) || 0,
+            if (!nom) return toast('Nom requis', false);
+            const formats = [...document.querySelectorAll('.fmt-row')].map(r => ({
+                nom: r.querySelector('.fmt-name').value.trim(),
+                prix: parseFloat(r.querySelector('.fmt-price').value) || 0,
             })).filter(f => f.prix > 0);
-
             const payload = {
                 nom,
-                description,
-                categorie,
-                actif,
-                formats
+                description: document.getElementById('plat-desc').value.trim(),
+                categorie_id: +document.getElementById('plat-cat').value,
+                temperature: document.getElementById('plat-temp').value,
+                actif: document.getElementById('plat-actif').checked,
+                formats,
             };
-
-            let error;
-            if (id) {
-                ({
-                    error
-                } = await db.from('plats').update(payload).eq('id', id));
-            } else {
-                ({
-                    error
-                } = await db.from('plats').insert(payload));
-            }
-
-            if (error) {
-                showToast('Erreur : ' + error.message, 'error');
-                return;
-            }
-
-            closePlatModal();
-            await loadPlats();
-            showToast(id ? 'Plat modifié !' : 'Plat créé !');
-        }
-
-        async function deletePlat(id) {
-            if (!confirm('Supprimer ce plat définitivement ?')) return;
             const {
                 error
-            } = await db.from('plats').delete().eq('id', id);
-            if (error) {
-                showToast('Erreur : ' + error.message, 'error');
-                return;
-            }
+            } = id
+                ?
+                await db.from('plats').update(payload).eq('id', id) :
+                await db.from('plats').insert(payload);
+            if (error) return toast(error.message, false);
+            closeModal('plat-modal');
             await loadPlats();
-            showToast('Plat supprimé.');
+            toast(id ? 'Plat modifié !' : 'Plat créé !');
         }
 
-        // ── COMMANDES ─────────────────────────────────────────
-        const STATUT_LABELS = {
-            awaiting_location: '📍 En attente adresse',
-            preparation: '👨‍🍳 En préparation',
-            en_livraison: '🚴 En route',
-            imminent: '📍 Imminente',
-            delivered: '✅ Livré',
-            pending: '⏳ En attente',
+        async function delPlat(id) {
+            if (!confirm('Supprimer ce plat ?')) return;
+            await db.from('plats').delete().eq('id', id);
+            await loadPlats();
+            toast('Plat supprimé');
+        }
+
+        // ── COMMANDES ────────────────────────────────────────────────
+        const STATUT_CFG = {
+            attente_adresse: {
+                label: 'Attente adresse',
+                cls: 'badge-pending'
+            },
+            attente_prix_livraison: {
+                label: 'Attente prix livraison',
+                cls: 'badge-warning'
+            },
+            attente_confirmation: {
+                label: 'Attente confirmation',
+                cls: 'badge-info'
+            },
+            attente_paiement: {
+                label: 'Attente paiement',
+                cls: 'badge-pending'
+            },
+            commande_confirmee: {
+                label: 'Commande confirmée',
+                cls: 'badge-ok'
+            },
+            en_livraison: {
+                label: 'En livraison',
+                cls: 'badge-livraison'
+            },
+            imminent: {
+                label: 'Livreur proche',
+                cls: 'badge-livraison'
+            },
+            livree: {
+                label: 'Livrée',
+                cls: 'badge-ok'
+            },
+            annulee: {
+                label: 'Annulée',
+                cls: 'badge-error'
+            },
         };
 
-        async function loadCommandes() {
+        function badgeStatut(s) {
+            const cfg = STATUT_CFG[s] || {
+                label: s,
+                cls: 'badge-gray'
+            };
+            return `<span class="badge ${cfg.cls}">${cfg.label}</span>`;
+        }
+
+        async function loadCmds() {
             const {
                 data
             } = await db.from('commandes').select('*').order('id', {
                 ascending: false
-            }).limit(100);
-            const commandes = data || [];
+            }).limit(200);
+            cmds = data || [];
+            renderCmdStats();
+            renderCmds();
+        }
 
-            const pending = commandes.filter(c => !['delivered'].includes(c.statut)).length;
-            const delivered = commandes.filter(c => c.statut === 'delivered').length;
-            const ca = commandes.filter(c => c.statut === 'delivered').reduce((s, c) => s + (c.total || 0), 0);
+        function renderCmdStats() {
+            const counts = {};
+            Object.keys(STATUT_CFG).forEach(k => counts[k] = cmds.filter(c => c.statut === k).length);
+            const active = ['attente_adresse', 'attente_prix_livraison', 'attente_confirmation', 'attente_paiement', 'commande_confirmee', 'en_livraison', 'imminent'];
+            const el = document.getElementById('cmd-stats');
+            el.innerHTML = `
+    <div class="stat-card"><div class="stat-val">${active.reduce((s,k)=>s+counts[k],0)}</div><div class="stat-lbl">En cours</div></div>
+    <div class="stat-card"><div class="stat-val">${counts.livree}</div><div class="stat-lbl">Livrées</div></div>
+    <div class="stat-card"><div class="stat-val">${counts.annulee}</div><div class="stat-lbl">Annulées</div></div>
+    <div class="stat-card"><div class="stat-val">${cmds.filter(c=>c.statut==='livree').reduce((s,c)=>s+(c.total||0)+(c.prix_livraison||0),0).toLocaleString('fr-FR')}</div><div class="stat-lbl">CA (articles+livr.)</div></div>`;
+        }
 
-            document.getElementById('cmd-pending').textContent = pending;
-            document.getElementById('cmd-delivered').textContent = delivered;
-            document.getElementById('cmd-ca').textContent = ca.toLocaleString('fr-FR');
+        function renderCmds() {
+            const search = document.getElementById('f-search').value.toLowerCase();
+            const statut = document.getElementById('f-statut').value;
+            const date = document.getElementById('f-date').value;
+            let filtered = cmds;
+            if (statut) filtered = filtered.filter(c => c.statut === statut);
+            if (search) filtered = filtered.filter(c => (c.client || '').toLowerCase().includes(search) || (c.article || '').toLowerCase().includes(search) || String(c.id).includes(search));
+            if (date) filtered = filtered.filter(c => (c.created_at || '').startsWith(date));
 
-            const tbody = document.getElementById('cmd-tbody');
-            if (!commandes.length) {
-                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>Aucune commande</p></div></td></tr>';
+            const tb = document.getElementById('cmds-tbody');
+            if (!filtered.length) {
+                tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">Aucune commande</td></tr>';
                 return;
             }
-            tbody.innerHTML = commandes.map(c => `
-      <tr>
-        <td style="color:var(--muted)">#${c.id}</td>
-        <td style="font-weight:600">${c.client || '–'}</td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${c.article || ''}">${c.article || '–'}</td>
-        <td style="color:var(--gold2);font-weight:700">${(c.total || 0).toLocaleString('fr-FR')} F</td>
-        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;" title="${c.adresse || ''}">${c.adresse || '–'}</td>
-        <td style="font-size:12px;color:var(--muted)">${c.heure || '–'}</td>
-        <td style="font-size:12px">${STATUT_LABELS[c.statut] || c.statut}</td>
-      </tr>`).join('');
+            tb.innerHTML = filtered.map(c => `<tr style="cursor:pointer" onclick="openCmd(${c.id})">
+    <td>#${c.id}</td>
+    <td>${c.client || '–'}</td>
+    <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.article||''}">${c.article || '–'}</td>
+    <td style="white-space:nowrap">${(c.total||0).toLocaleString('fr-FR')}</td>
+    <td style="white-space:nowrap">${c.prix_livraison != null ? c.prix_livraison.toLocaleString('fr-FR') : '<span style="color:var(--muted)">–</span>'}</td>
+    <td>${badgeStatut(c.statut)}</td>
+    <td style="color:var(--muted);font-size:12px">${c.heure || '–'}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openCmd(${c.id})">→</button></td>
+  </tr>`).join('');
         }
 
-    </script>
+        function openCmd(id) {
+            const cmd = cmds.find(c => c.id === id);
+            if (!cmd) return;
+            currentCmd = cmd;
+            document.getElementById('cm-title').textContent = `Commande #${cmd.id} — ${cmd.client || '–'}`;
 
-    <!-- ── MOBILE NAV ────────────────────────────────────────── -->
-    <nav class="mobile-nav" id="mobile-nav">
-        <button class="mobile-nav-item active" id="mn-restaurant" onclick="showSection('restaurant', this); syncMobileNav('restaurant')">
-            <span class="mn-icon">🏪</span>Restaurant
-        </button>
-        <button class="mobile-nav-item" id="mn-horaires" onclick="showSection('horaires', this); syncMobileNav('horaires')">
-            <span class="mn-icon">🕐</span>Horaires
-        </button>
-        <button class="mobile-nav-item" id="mn-plats" onclick="showSection('plats', this); syncMobileNav('plats')">
-            <span class="mn-icon">🍽️</span>Carte
-        </button>
-        <button class="mobile-nav-item" id="mn-commandes" onclick="showSection('commandes', this); syncMobileNav('commandes')">
-            <span class="mn-icon">📋</span>Commandes
-        </button>
-    </nav>
+            const total = (cmd.total || 0) + (cmd.prix_livraison || 0);
+            let body = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${field('Client', cmd.client)}${field('Téléphone', cmd.telephone ? `<a href="tel:${cmd.telephone.replace('whatsapp:','')}" style="color:var(--accent)">${cmd.telephone}</a>` : '–', true)}
+      ${field('Commande', cmd.article)}${field('Jour livraison', cmd.jour_livraison)}
+      ${field('Total articles', fmt(cmd.total))}${field('Statut', badgeStatut(cmd.statut), true)}
+      ${field('Adresse', cmd.adresse || '–')}${field('Heure', cmd.heure || '–')}
+    </div>`;
 
-    <script>
-        function syncMobileNav(name) {
-            document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById('mn-' + name);
-            if (btn) btn.classList.add('active');
+            // Prix livraison (seul champ éditable)
+            body += `<div class="card" style="margin-bottom:12px">
+    <div class="card-title">🛵 Prix de livraison</div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <div class="field" style="flex:1;margin:0">
+        <label>Montant</label>
+        <input id="cm-prix" type="number" value="${cmd.prix_livraison || ''}" placeholder="0" ${['commande_confirmee','en_livraison','imminent','livree','annulee'].includes(cmd.statut) ? 'disabled' : ''}/>
+      </div>
+      ${!['commande_confirmee','en_livraison','imminent','livree','annulee'].includes(cmd.statut)
+        ? `<button class="btn btn-accent" onclick="sendPrix()">📤 Envoyer au client</button>` : ''}
+    </div>
+    ${cmd.prix_livraison != null ? `<p style="margin-top:8px;font-size:12px;color:var(--muted)">💰 Total avec livraison : <strong>${fmt(total)}</strong></p>` : ''}
+  </div>`;
+
+            // Preuve de paiement
+            if (cmd.reference_paiement) {
+                const isImg = cmd.reference_paiement.startsWith('http');
+                body += `<div class="card" style="margin-bottom:12px">
+      <div class="card-title">💳 Preuve de paiement</div>
+      ${isImg
+        ? `<img src="${cmd.reference_paiement}" class="proof-img" alt="Capture paiement"/>`
+        : `<span class="proof-ref">${cmd.reference_paiement}</span>`}
+    </div>`;
+            }
+
+            document.getElementById('cm-body').innerHTML = body;
+
+            // Actions
+            const actions = [];
+            if (cmd.statut === 'attente_paiement') {
+                actions.push(`<button class="btn btn-success" onclick="confirmPaiement()">✅ Confirmer le paiement</button>`);
+            }
+            if (!['livree', 'annulee'].includes(cmd.statut)) {
+                actions.push(`<button class="btn btn-danger" onclick="cancelCmd()">🚫 Annuler</button>`);
+            }
+            if (['livree', 'annulee'].includes(cmd.statut)) {
+                actions.push(`<button class="btn btn-danger" onclick="deleteCmd()">🗑️ Supprimer</button>`);
+            }
+            actions.push(`<button class="btn btn-ghost" onclick="closeModal('cmd-modal')">Fermer</button>`);
+            document.getElementById('cm-actions').innerHTML = actions.join('');
+            document.getElementById('cmd-modal').classList.add('open');
         }
 
-        // Patch showSection pour aussi sync la mobile nav
-        const _origShow = showSection;
-        // Override: on wrappe dans DOMContentLoaded pour s'assurer que showSection existe
-        const _origShowSection = showSection;
-        window.showSection = function(name, el) {
-            _origShowSection(name, el);
-            syncMobileNav(name);
-        };
+        function field(label, value, raw = false) {
+            return `<div style="background:var(--bg);border-radius:7px;padding:10px 12px">
+    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${label}</div>
+    <div style="font-size:13px;color:var(--text)">${raw ? value : (value || '–')}</div>
+  </div>`;
+        }
+
+        function fmt(n) {
+            if (n == null) return '–';
+            const devise = document.getElementById('r-devise')?.value || 'FCFA';
+            return `${parseInt(n).toLocaleString('fr-FR')} ${devise}`;
+        }
+
+        async function sendPrix() {
+            if (!currentCmd) return;
+            const prix = parseFloat(document.getElementById('cm-prix').value);
+            if (!prix || prix <= 0) return toast('Entrez un prix valide', false);
+            try {
+                await fetch(`${RAILWAY_URL}/notify-prix`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        commandeId: currentCmd.id,
+                        prix
+                    }),
+                });
+                closeModal('cmd-modal');
+                await loadCmds();
+                toast('Prix envoyé au client !');
+            } catch {
+                toast('Erreur réseau', false);
+            }
+        }
+
+        async function confirmPaiement() {
+            if (!currentCmd) return;
+            try {
+                await fetch(`${RAILWAY_URL}/confirm-paiement`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        commandeId: currentCmd.id
+                    }),
+                });
+                closeModal('cmd-modal');
+                await loadCmds();
+                toast('Paiement confirmé !');
+            } catch {
+                toast('Erreur réseau', false);
+            }
+        }
+
+        async function cancelCmd() {
+            if (!currentCmd || !confirm('Annuler cette commande ?')) return;
+            try {
+                await fetch(`${RAILWAY_URL}/cancel-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        commandeId: currentCmd.id
+                    }),
+                });
+                closeModal('cmd-modal');
+                await loadCmds();
+                toast('Commande annulée');
+            } catch {
+                toast('Erreur réseau', false);
+            }
+        }
+
+        async function deleteCmd() {
+            if (!currentCmd || !confirm('Supprimer définitivement ?')) return;
+            await db.from('commandes').delete().eq('id', currentCmd.id);
+            closeModal('cmd-modal');
+            await loadCmds();
+            toast('Commande supprimée');
+        }
+
+        // ── MODAL UTILS ──────────────────────────────────────────────
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+        document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => {
+            if (e.target === o) o.classList.remove('open');
+        }));
+
+        // ── INIT ─────────────────────────────────────────────────────
+        document.getElementById('tab-livrees') && (document.getElementById('tab-livrees').style.display = 'none');
+        (async () => {
+            await loadConfig();
+            await loadCats();
+            await loadPlats();
+        })();
 
     </script>
-
 </body>
 
 </html>
