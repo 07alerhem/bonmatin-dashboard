@@ -3,183 +3,190 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BonMatin — Adresse de livraison</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Adresse de livraison</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            --accent: #B5803A;
+            --primary: #1C1917;
+            --bg: #F7F5F2;
+            --surface: #fff;
+            --border: #E8E3DC;
+            --muted: #9C8E82;
+            --text: #2C2420
+        }
+
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         html,
         body {
             height: 100%;
-            font-family: sans-serif;
-            background: #F8F6F1;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg)
         }
 
         body {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100vh
         }
 
         header {
-            background: linear-gradient(135deg, #2C1810, #5C3317);
-            color: #fff;
-            padding: 14px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-shrink: 0;
+            flex-shrink: 0
         }
 
         header .logo {
-            font-size: 24px;
+            font-size: 22px
         }
 
         header h1 {
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary)
         }
 
         header p {
             font-size: 11px;
-            opacity: 0.7;
-            margin-top: 1px;
+            color: var(--muted);
+            margin-top: 1px
         }
 
         .search-bar {
-            background: #fff;
-            padding: 10px 12px;
+            background: var(--surface);
+            padding: 9px 12px;
             display: flex;
-            gap: 8px;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            gap: 7px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0
         }
 
         .search-input {
             flex: 1;
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1.5px solid #ddd;
-            font-size: 14px;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 13px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color .15s;
+            font-family: inherit
         }
 
         .search-input:focus {
-            border-color: #FF6B35;
+            border-color: var(--accent)
         }
 
-        .btn-search {
-            padding: 10px 14px;
-            background: #2C1810;
-            color: #fff;
+        .btn {
+            padding: 9px 13px;
+            border-radius: 7px;
             border: none;
-            border-radius: 10px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
-            white-space: nowrap;
-            flex-shrink: 0;
+            font-family: inherit;
+            transition: all .15s
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: #fff
         }
 
         .btn-gps {
-            padding: 10px 12px;
-            background: #FF6B35;
+            background: var(--accent);
             color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
+            font-size: 16px
+        }
+
+        .status {
+            font-size: 11px;
+            padding: 7px 12px;
+            text-align: center;
             flex-shrink: 0;
+            display: none
+        }
+
+        .status.info {
+            background: #DBEAFE;
+            color: #1E40AF;
+            display: block
+        }
+
+        .status.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            display: block
         }
 
         #map {
             flex: 1;
-            z-index: 1;
+            z-index: 1
         }
 
-        .map-hint {
-            background: rgba(44, 24, 16, 0.85);
+        .hint {
+            background: rgba(28, 25, 23, .8);
             color: #fff;
             font-size: 11px;
             text-align: center;
-            padding: 6px 12px;
-            flex-shrink: 0;
+            padding: 5px 12px;
+            flex-shrink: 0
         }
 
         .confirm-bar {
-            background: #fff;
-            border-top: 2px solid #FF6B35;
-            padding: 12px 14px;
+            background: var(--surface);
+            border-top: 2px solid var(--accent);
+            padding: 11px 13px;
             flex-shrink: 0;
             display: none;
             flex-direction: column;
             gap: 8px;
-            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -3px 12px rgba(0, 0, 0, .08)
         }
 
         .confirm-bar.show {
-            display: flex;
+            display: flex
         }
 
-        .confirm-address {
+        .confirm-addr {
             font-size: 12px;
-            color: #444;
-            background: #F8F6F1;
-            border-radius: 8px;
+            color: var(--text);
+            background: var(--bg);
+            border-radius: 7px;
             padding: 8px 12px;
-            line-height: 1.5;
+            line-height: 1.5
         }
 
         .btn-confirm {
-            background: linear-gradient(135deg, #25D366, #128C7E);
+            background: linear-gradient(135deg, #16A34A, #15803D);
             color: #fff;
             border: none;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 15px;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            font-family: inherit
         }
 
         .btn-confirm:disabled {
-            background: #aaa;
-            box-shadow: none;
-            cursor: not-allowed;
+            background: #9C8E82;
+            cursor: not-allowed
         }
 
-        .status-msg {
-            font-size: 12px;
-            padding: 8px 12px;
-            text-align: center;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .status-msg.error {
-            background: #FFE4E4;
-            color: #c0392b;
-            display: block;
-        }
-
-        .status-msg.info {
-            background: #E8F4FD;
-            color: #2980b9;
-            display: block;
-        }
-
-        .success-screen {
+        .success {
             display: none;
             flex-direction: column;
             align-items: center;
@@ -187,16 +194,16 @@
             flex: 1;
             padding: 40px 20px;
             text-align: center;
-            gap: 16px;
+            gap: 14px
         }
 
-        .success-screen.show {
-            display: flex;
+        .success.show {
+            display: flex
         }
 
         .success-icon {
-            font-size: 70px;
-            animation: pop 0.5s ease;
+            font-size: 60px;
+            animation: pop .5s ease
         }
 
         @keyframes pop {
@@ -205,7 +212,7 @@
             }
 
             70% {
-                transform: scale(1.2)
+                transform: scale(1.15)
             }
 
             100% {
@@ -213,29 +220,29 @@
             }
         }
 
-        .success-screen h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #2C1810;
+        .success h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary)
         }
 
-        .success-screen p {
-            font-size: 14px;
-            color: #666;
+        .success p {
+            font-size: 13px;
+            color: var(--muted);
             max-width: 280px;
-            line-height: 1.6;
+            line-height: 1.6
         }
 
         .btn-track {
             display: inline-block;
-            margin-top: 8px;
             padding: 12px 24px;
-            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            background: var(--accent);
             color: #fff;
-            border-radius: 12px;
+            border-radius: 9px;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 14px;
+            margin-top: 4px
         }
 
     </style>
@@ -244,99 +251,117 @@
 <body>
 
     <header>
-        <div class="logo">🥐</div>
+        <div class="logo">🍝</div>
         <div>
-            <h1>Où livrer votre commande ?</h1>
+            <h1 id="resto-header">Indiquez votre adresse</h1>
             <p>Cherchez une adresse ou cliquez sur la carte</p>
         </div>
     </header>
 
     <div class="search-bar">
-        <input class="search-input" id="search-input" placeholder="Ex : 12 rue de la Paix, Marseille" onkeydown="if(event.key==='Enter') searchAddress()" />
-        <button class="btn-search" onclick="searchAddress()">🔍</button>
-        <button class="btn-gps" onclick="useGPS()" title="Utiliser ma position">📡</button>
+        <input class="search-input" id="search-input" placeholder="Ex : 12 rue de la Paix, Lomé" onkeydown="if(event.key==='Enter')search()" />
+        <button class="btn btn-search" onclick="search()">🔍</button>
+        <button class="btn btn-gps" onclick="useGPS()" title="Me géolocaliser">📡</button>
     </div>
 
-    <div class="status-msg" id="status-msg"></div>
+    <div class="status" id="status"></div>
     <div id="map"></div>
-    <div class="map-hint">👆 Cliquez sur la carte pour affiner l'emplacement exact</div>
+    <div class="hint">👆 Cliquez sur la carte pour affiner la position</div>
 
     <div class="confirm-bar" id="confirm-bar">
-        <div class="confirm-address" id="confirm-address"></div>
-        <button class="btn-confirm" id="btn-confirm" onclick="confirmLocation()">✅ Confirmer cette adresse</button>
+        <div class="confirm-addr" id="confirm-addr"></div>
+        <button class="btn-confirm" id="btn-confirm" onclick="confirm()">✅ Confirmer cette adresse</button>
     </div>
 
-    <div class="success-screen" id="success-screen">
+    <div class="success" id="success">
         <div class="success-icon">🎉</div>
-        <h2>C'est parti !</h2>
-        <p>Votre commande est en préparation. Vous allez recevoir un message WhatsApp avec le lien de suivi.</p>
-        <a id="track-link" href="#" class="btn-track">📦 Suivre ma livraison</a>
-        <p style="font-size:11px;color:#aaa;margin-top:4px;">Vous pouvez aussi fermer cette page.</p>
+        <h2>Adresse enregistrée !</h2>
+        <p>Merci ! Nous revenons vers vous rapidement pour vous indiquer le montant de la livraison.</p>
+        <a id="track-link" href="#" class="btn-track">📦 Suivre ma commande</a>
+        <p style="font-size:11px;color:#ccc;margin-top:4px">Vous pouvez fermer cette page.</p>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://mcazrrbpejlgosukqwfa.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jYXpycmJwZWpsZ29zdWtxd2ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjAyOTUsImV4cCI6MjA4ODM5NjI5NX0.-rGCBpZZb5JFeHZk-OYEqnMcgLLdqIRgjHV5FsQJPEk';
-        const RAILWAY_URL = 'https://bonmatin-bot-production.up.railway.app'; // ex: https://bonmatin-bot-production.up.railway.app
-
+        const RAILWAY_URL = 'https://bonmatin-bot-production.up.railway.app';
         const {
             createClient
         } = supabase;
         const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const telephone = urlParams.get('tel') || '';
+        const params = new URLSearchParams(location.search);
+        const telephone = params.get('tel') || '';
+        const cmdId = params.get('id');
 
-        let selectedLat = null,
-            selectedLng = null,
-            selectedAddr = '';
-        let marker = null;
-        let commandeId = null;
+        let lat = null,
+            lng = null,
+            addr = '',
+            marker = null,
+            map;
 
-        // ── CARTE ────────────────────────────────────────────────
-        const map = L.map('map').setView([43.2965, 5.3698], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-        map.on('click', async e => {
-            setPoint(e.latlng.lat, e.latlng.lng);
-            selectedAddr = await reverseGeocode(e.latlng.lat, e.latlng.lng);
-            showConfirm();
-        });
+        // Charge la config resto pour centrer la carte
+        async function loadRestoConfig() {
+            const {
+                data
+            } = await db.from('config').select('key,value').in('key', ['r-nom', 'r-latitude', 'r-longitude']);
+            const cfg = Object.fromEntries((data || []).map(r => [r.key, r.value]));
+            if (cfg['r-nom']) document.getElementById('resto-header').textContent = `Livraison — ${cfg['r-nom']}`;
+            return {
+                lat: parseFloat(cfg['r-latitude'] || 6.1375),
+                lng: parseFloat(cfg['r-longitude'] || 1.2123),
+            };
+        }
 
-        function setPoint(lat, lng) {
-            selectedLat = lat;
-            selectedLng = lng;
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([lat, lng], {
+        async function initMap() {
+            const restoCfg = await loadRestoConfig();
+            map = L.map('map').setView([restoCfg.lat, restoCfg.lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OSM'
+            }).addTo(map);
+            // Marqueur restaurant (indicatif)
+            L.marker([restoCfg.lat, restoCfg.lng], {
                 icon: L.divIcon({
-                    html: '<div style="font-size:30px;transform:translate(-50%,-100%)">📍</div>',
+                    html: '<div style="font-size:22px;transform:translate(-50%,-100%)">🍝</div>',
+                    className: '',
+                    iconSize: [0, 0]
+                })
+            }).addTo(map).bindPopup('Restaurant');
+
+            map.on('click', async e => {
+                setPoint(e.latlng.lat, e.latlng.lng);
+                addr = await reverseGeocode(e.latlng.lat, e.latlng.lng);
+                showConfirm();
+            });
+        }
+
+        function setPoint(la, lo) {
+            lat = la;
+            lng = lo;
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([la, lo], {
+                icon: L.divIcon({
+                    html: '<div style="font-size:28px;transform:translate(-50%,-100%)">📍</div>',
                     className: '',
                     iconSize: [0, 0]
                 })
             }).addTo(map);
         }
 
-        // ── RECHERCHE ────────────────────────────────────────────
-        async function searchAddress() {
+        async function search() {
             const q = document.getElementById('search-input').value.trim();
             if (!q) return;
-            showStatus('Recherche...', 'info');
+            showStatus('Recherche…', 'info');
             try {
                 const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`);
-                const data = await r.json();
-                if (!data.length) {
+                const d = await r.json();
+                if (!d.length) {
                     showStatus('Adresse introuvable. Essayez autrement.', 'error');
                     return;
                 }
-                const {
-                    lat,
-                    lon,
-                    display_name
-                } = data[0];
-                selectedAddr = display_name;
-                setPoint(parseFloat(lat), parseFloat(lon));
-                map.setView([parseFloat(lat), parseFloat(lon)], 17);
+                addr = d[0].display_name;
+                setPoint(+d[0].lat, +d[0].lon);
+                map.setView([+d[0].lat, +d[0].lon], 17);
                 hideStatus();
                 showConfirm();
             } catch {
@@ -344,81 +369,75 @@
             }
         }
 
-        // ── GPS ──────────────────────────────────────────────────
         function useGPS() {
-            showStatus('Détection en cours...', 'info');
+            showStatus('Détection…', 'info');
             if (!navigator.geolocation) {
                 showStatus('GPS non disponible.', 'error');
                 return;
             }
-            navigator.geolocation.getCurrentPosition(
-                async pos => {
-                        const {
-                            latitude: lat,
-                            longitude: lng
-                        } = pos.coords;
-                        setPoint(lat, lng);
-                        map.setView([lat, lng], 17);
-                        selectedAddr = await reverseGeocode(lat, lng);
-                        hideStatus();
-                        showConfirm();
-                    },
-                    () => showStatus('Position non détectée. Cherchez votre adresse.', 'error'), {
-                        enableHighAccuracy: true,
-                        timeout: 10000
-                    }
-            );
+            navigator.geolocation.getCurrentPosition(async p => {
+                setPoint(p.coords.latitude, p.coords.longitude);
+                map.setView([p.coords.latitude, p.coords.longitude], 17);
+                addr = await reverseGeocode(p.coords.latitude, p.coords.longitude);
+                hideStatus();
+                showConfirm();
+            }, () => showStatus('Position non détectée. Cherchez votre adresse.', 'error'), {
+                enableHighAccuracy: true,
+                timeout: 10000
+            });
         }
 
-        async function reverseGeocode(lat, lng) {
+        async function reverseGeocode(la, lo) {
             try {
-                const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+                const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${la}&lon=${lo}&format=json`);
                 const d = await r.json();
-                return d.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                return d.display_name || `${la.toFixed(5)}, ${lo.toFixed(5)}`;
             } catch {
-                return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                return `${la.toFixed(5)}, ${lo.toFixed(5)}`;
             }
         }
 
         function showConfirm() {
-            document.getElementById('confirm-address').textContent = `📍 ${selectedAddr}`;
+            document.getElementById('confirm-addr').textContent = `📍 ${addr}`;
             document.getElementById('confirm-bar').classList.add('show');
         }
 
-        // ── CONFIRMATION ─────────────────────────────────────────
-        async function confirmLocation() {
-            if (!selectedLat || !selectedLng) return;
+        async function confirm() {
+            if (!lat || !lng) return;
             const btn = document.getElementById('btn-confirm');
             btn.disabled = true;
-            btn.textContent = '⏳ Enregistrement...';
+            btn.textContent = '⏳ Enregistrement…';
 
-            // 1. Met à jour la commande dans Supabase
+            // Met à jour la commande
+            const query = cmdId ?
+                db.from('commandes').update({
+                    latitude: lat,
+                    longitude: lng,
+                    adresse: addr,
+                    statut: 'attente_prix_livraison'
+                }).eq('id', cmdId) :
+                db.from('commandes').update({
+                    latitude: lat,
+                    longitude: lng,
+                    adresse: addr,
+                    statut: 'attente_prix_livraison'
+                })
+                .eq('telephone', `whatsapp:+${telephone}`).eq('statut', 'attente_adresse');
+
             const {
                 data,
                 error
-            } = await db.from('commandes')
-                .update({
-                    latitude: selectedLat,
-                    longitude: selectedLng,
-                    adresse: selectedAddr,
-                    statut: 'preparation'
-                })
-                .eq('telephone', `whatsapp:+${telephone}`)
-                .eq('statut', 'awaiting_location')
-                .select('id')
-                .single();
+            } = await query.select('id').single();
 
             if (error || !data) {
                 console.error(error);
-                showStatus('Erreur lors de l\'enregistrement. Réessayez.', 'error');
                 btn.disabled = false;
                 btn.textContent = '✅ Confirmer cette adresse';
+                showStatus('Erreur. Réessayez.', 'error');
                 return;
             }
 
-            commandeId = data.id;
-
-            // 2. Appelle Railway pour envoyer le WhatsApp de confirmation
+            // Notifie le bot
             try {
                 await fetch(`${RAILWAY_URL}/notify`, {
                     method: 'POST',
@@ -427,35 +446,35 @@
                     },
                     body: JSON.stringify({
                         telephone,
-                        commandeId
+                        commandeId: data.id
                     }),
                 });
             } catch (e) {
-                console.warn('Notify failed (non bloquant):', e.message);
+                console.warn('notify failed', e.message);
             }
 
-            // 3. Affiche l'écran succès avec lien de suivi
-            const trackUrl = `${window.location.origin}/track.html?id=${commandeId}`;
-            document.getElementById('track-link').href = trackUrl;
-
+            // Écran succès
+            document.getElementById('track-link').href = `${location.origin}/track.html?id=${data.id}`;
             document.querySelector('header').style.display = 'none';
             document.querySelector('.search-bar').style.display = 'none';
-            document.querySelector('.map-hint').style.display = 'none';
+            document.querySelector('.hint').style.display = 'none';
             document.getElementById('map').style.display = 'none';
             document.getElementById('confirm-bar').style.display = 'none';
-            document.getElementById('status-msg').style.display = 'none';
-            document.getElementById('success-screen').classList.add('show');
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('success').classList.add('show');
         }
 
         function showStatus(msg, type) {
-            const el = document.getElementById('status-msg');
-            el.textContent = msg;
-            el.className = `status-msg ${type}`;
+            const s = document.getElementById('status');
+            s.textContent = msg;
+            s.className = `status ${type}`;
         }
 
         function hideStatus() {
-            document.getElementById('status-msg').className = 'status-msg';
+            document.getElementById('status').className = 'status';
         }
+
+        initMap();
 
     </script>
 </body>
